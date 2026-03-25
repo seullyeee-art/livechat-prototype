@@ -1281,6 +1281,7 @@ function showCinematic() {
   const sparkles = document.getElementById('cineParticles');
   sparkles.innerHTML = '';
   document.getElementById('cineAmount').textContent = selectedAmount.toLocaleString() + ' 미르';
+  document.querySelector('.cine-emoji').textContent = TIER_EMOJIS[getTierKey(selectedAmount)];
 
   // Sparkle particles in cinematic
   for (let i = 0; i < 30; i++) {
