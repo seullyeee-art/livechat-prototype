@@ -595,25 +595,50 @@ html,body{
 /* ═══ DONATION EFFECTS ═══ */
 .donate-effect{
   position:fixed;inset:0;z-index:400;pointer-events:none;
-  opacity:0;transition:opacity 0.4s;
+  opacity:0;transition:opacity 0.3s;
 }
 .donate-effect.show{opacity:1}
 .particle-container{position:absolute;inset:0;overflow:hidden}
-.particle{
-  position:absolute;font-size:18px;
-  animation:particleRise 2.5s ease-out forwards;
-  filter:drop-shadow(0 0 6px rgba(255,255,255,0.3));
+
+/* 틱톡 스타일: 아이콘이 아래에서 위로 떠오르며 좌우로 흔들림 */
+.gift-float{
+  position:absolute;bottom:20%;
+  font-size:32px;opacity:0;
+  animation:giftFloat 2.8s ease-out forwards;
+  filter:drop-shadow(0 0 8px rgba(232,200,122,0.4));
 }
-@keyframes particleRise{
-  0%{opacity:0;transform:translateY(0) scale(0.3) rotate(0deg)}
-  15%{opacity:1;transform:translateY(-30px) scale(1) rotate(10deg)}
-  100%{opacity:0;transform:translateY(-400px) scale(0.6) rotate(-20deg)}
+@keyframes giftFloat{
+  0%{opacity:0;transform:translateY(0) scale(0.3) rotate(-5deg)}
+  8%{opacity:1;transform:translateY(-20px) scale(1.2) rotate(3deg)}
+  15%{transform:translateY(-60px) scale(1) rotate(-3deg)}
+  30%{transform:translateY(-120px) scale(1.1) rotate(5deg)}
+  50%{transform:translateY(-220px) scale(0.9) rotate(-4deg)}
+  70%{opacity:0.7;transform:translateY(-320px) scale(0.7) rotate(6deg)}
+  100%{opacity:0;transform:translateY(-450px) scale(0.4) rotate(-8deg)}
 }
+
+/* 큰 센터 아이콘 팝업 */
+.gift-center{
+  position:absolute;top:35%;left:50%;
+  font-size:72px;opacity:0;pointer-events:none;
+  transform:translate(-50%,-50%) scale(0);
+  animation:giftPop 1.2s cubic-bezier(.16,1,.3,1) forwards;
+  filter:drop-shadow(0 0 30px rgba(232,200,122,0.6));
+}
+@keyframes giftPop{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(0) rotate(-10deg)}
+  25%{opacity:1;transform:translate(-50%,-50%) scale(1.3) rotate(5deg)}
+  40%{transform:translate(-50%,-50%) scale(0.95) rotate(-2deg)}
+  55%{transform:translate(-50%,-50%) scale(1.1) rotate(1deg)}
+  70%{transform:translate(-50%,-50%) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(1.4) rotate(0deg)}
+}
+
 .gold-glow{
-  position:absolute;top:40%;left:50%;
+  position:absolute;top:35%;left:50%;
   width:300px;height:300px;
   transform:translate(-50%,-50%);
-  background:radial-gradient(circle,rgba(60,200,168,0.35) 0%,rgba(232,200,122,0.15) 40%,transparent 70%);
+  background:radial-gradient(circle,rgba(60,200,168,0.3) 0%,rgba(232,200,122,0.12) 40%,transparent 70%);
   animation:glowPulse 1.5s ease-out;
 }
 @keyframes glowPulse{
@@ -625,12 +650,10 @@ html,body{
 /* Screen flash */
 .screen-flash{
   position:fixed;inset:0;z-index:399;pointer-events:none;
-  background:radial-gradient(ellipse at center,rgba(60,200,168,0.4),rgba(232,200,122,0.2),transparent 70%);
+  background:radial-gradient(ellipse at center,rgba(60,200,168,0.3),rgba(232,200,122,0.15),transparent 70%);
   opacity:0;animation:flashBang 0.6s ease-out forwards;
 }
-@keyframes flashBang{
-  0%{opacity:0}15%{opacity:1}100%{opacity:0}
-}
+@keyframes flashBang{0%{opacity:0}15%{opacity:1}100%{opacity:0}}
 
 /* Confetti */
 .confetti{
@@ -642,6 +665,17 @@ html,body{
   0%{opacity:1;transform:translateY(-20px) rotate(0deg) scale(1)}
   80%{opacity:1}
   100%{opacity:0;transform:translateY(110vh) rotate(720deg) scale(0.5)}
+}
+
+/* 미니 하트 버스트 (틱톡 더블탭 스타일) */
+.heart-burst{
+  position:absolute;font-size:20px;opacity:0;pointer-events:none;
+  animation:heartBurst 1.5s ease-out forwards;
+}
+@keyframes heartBurst{
+  0%{opacity:0;transform:scale(0) rotate(0deg)}
+  15%{opacity:1;transform:scale(1.2) rotate(-15deg)}
+  100%{opacity:0;transform:translateY(-200px) scale(0.5) rotate(15deg)}
 }
 
 /* Cinematic */
@@ -1130,10 +1164,7 @@ function goToStep1() { setStep(1); }
 function processDonation() {
   balance -= selectedAmount;
   document.getElementById('successAmount').textContent = selectedAmount.toLocaleString() + ' 미르를 셀린에게 전달했어요';
-  const tierEmojis = {10:'🤍',50:'💛',100:'🧡',300:'💜',500:'❤️‍🔥',1000:'👑'};
-  let eKey = 10;
-  if(selectedAmount>=1000) eKey=1000; else if(selectedAmount>=500) eKey=500; else if(selectedAmount>=300) eKey=300; else if(selectedAmount>=100) eKey=100; else if(selectedAmount>=50) eKey=50;
-  document.getElementById('successEmoji').textContent = tierEmojis[eKey];
+  document.getElementById('successEmoji').textContent = TIER_EMOJIS[getTierKey(selectedAmount)];
 
   // 시트+백드롭 완전히 닫기
   const sheet = document.getElementById('donateSheet');
@@ -1185,21 +1216,56 @@ function typeReaction(text) {
 }
 
 // ═══ EFFECTS ═══
+const TIER_EMOJIS = {10:'🤍',50:'💛',100:'🧡',300:'💜',500:'❤️‍🔥',1000:'👑'};
+
+function getTierKey(amount) {
+  if(amount>=1000) return 1000;
+  if(amount>=500) return 500;
+  if(amount>=300) return 300;
+  if(amount>=100) return 100;
+  if(amount>=50) return 50;
+  return 10;
+}
+
 function showDonateEffect() {
   const fx = document.getElementById('donateEffect');
   const container = document.getElementById('particleContainer');
   container.innerHTML = '';
-  const emojis = ['✨','💫','⭐','🌟','💛','💚','🤍'];
-  for (let i = 0; i < 20; i++) {
+  const tierKey = getTierKey(selectedAmount);
+  const mainEmoji = TIER_EMOJIS[tierKey];
+  const subEmojis = ['✨','💫','⭐'];
+
+  // 센터 빅 아이콘 팝업
+  const center = document.createElement('div');
+  center.className = 'gift-center';
+  center.textContent = mainEmoji;
+  container.appendChild(center);
+  setTimeout(() => center.remove(), 1300);
+
+  // 틱톡 스타일 플로팅 아이콘들
+  const count = tierKey >= 300 ? 18 : tierKey >= 100 ? 12 : 8;
+  for (let i = 0; i < count; i++) {
     const p = document.createElement('div');
-    p.className = 'particle';
-    p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-    p.style.left = (10 + Math.random() * 80) + '%';
-    p.style.top = (40 + Math.random() * 40) + '%';
-    p.style.animationDelay = Math.random() * 0.8 + 's';
-    p.style.fontSize = (14 + Math.random() * 12) + 'px';
+    p.className = 'gift-float';
+    p.textContent = Math.random() > 0.3 ? mainEmoji : subEmojis[Math.floor(Math.random()*subEmojis.length)];
+    p.style.left = (5 + Math.random() * 90) + '%';
+    p.style.animationDelay = (Math.random() * 1.2) + 's';
+    p.style.fontSize = (20 + Math.random() * 24) + 'px';
     container.appendChild(p);
   }
+
+  // 미니 하트 버스트 (양쪽에서)
+  for (let i = 0; i < 6; i++) {
+    const h = document.createElement('div');
+    h.className = 'heart-burst';
+    h.textContent = mainEmoji;
+    h.style.left = (Math.random() > 0.5 ? 10 + Math.random()*20 : 70 + Math.random()*20) + '%';
+    h.style.bottom = (10 + Math.random() * 30) + '%';
+    h.style.animationDelay = (0.2 + Math.random() * 0.8) + 's';
+    h.style.fontSize = (16 + Math.random() * 10) + 'px';
+    container.appendChild(h);
+  }
+
   // Screen flash
   const flash = document.createElement('div');
   flash.className = 'screen-flash';
@@ -1207,7 +1273,7 @@ function showDonateEffect() {
   setTimeout(() => flash.remove(), 700);
 
   fx.classList.add('show');
-  setTimeout(() => { fx.classList.remove('show'); container.innerHTML = ''; }, 3000);
+  setTimeout(() => { fx.classList.remove('show'); container.innerHTML = ''; }, 3500);
 }
 
 function showCinematic() {
