@@ -452,14 +452,6 @@ html,body{
   margin-bottom:20px;position:relative;
   animation:fadeUp 0.5s 0.7s both;
 }
-.char-thought::before{
-  content:'';position:absolute;top:-6px;left:30px;
-  width:12px;height:12px;border-radius:3px;
-  background:var(--fill-alternative);
-  border-left:1px solid var(--line-alternative);
-  border-top:1px solid var(--line-alternative);
-  transform:rotate(45deg);
-}
 .ct-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
 .ct-avatar{width:28px;height:28px;border-radius:50%;
   background:linear-gradient(135deg,var(--accent-gold),var(--accent-gold-strong));
@@ -971,7 +963,7 @@ html,body{
     <div class="success-amount" id="successAmount">100 미르를 셀린에게 전달했어요</div>
     <div class="char-thought" id="charThought">
       <div class="ct-header">
-        <div class="ct-avatar">셀</div>
+        <div class="ct-avatar" style="overflow:hidden"><img src="./images/char-profile.png" alt="셀린" style="width:100%;height:100%;object-fit:cover;border-radius:50%" onerror="this.style.display='none';this.parentElement.textContent='셀'"></div>
         <span class="ct-name">셀린</span>
         <span class="ct-reaction-tag">후원 반응</span>
       </div>
