@@ -3271,12 +3271,32 @@ function init() {
     }
   }
 
-  // 초기 상태: 대사 모드로 시작 (마지막 대사가 보이는 형태)
+  // 초기 상태: 대사 모드로 시작 (타이핑 애니메이션)
   const initDlg = pick(AI_DIALOGUE_SETS);
   const lastSegment = initDlg[initDlg.length - 1];
   const dlgText = document.getElementById('dlgText');
+  const dlgNameText = document.getElementById('dlgNameText');
   dlgText.className = 'dlg-text is-' + lastSegment.type;
-  dlgText.innerHTML = lastSegment.lines.map(l => '<div class="ln">' + l + '</div>').join('');
+  dlgNameText.textContent = '셀린';
+  dlgNameText.className = 'dlg-name-text is-char';
+
+  // 타이핑 애니메이션
+  const fullText = lastSegment.lines.join('\n');
+  let charIdx = 0;
+  dlgText.innerHTML = '<span class="typing-cursor"></span>';
+  window._dlgTypingTimer = setInterval(() => {
+    if (charIdx >= fullText.length) {
+      clearInterval(window._dlgTypingTimer);
+      dlgText.innerHTML = lastSegment.lines.map(l => '<div class="ln">' + l + '</div>').join('');
+      return;
+    }
+    const textSoFar = fullText.substring(0, charIdx + 1);
+    const rendered = textSoFar.split('\n');
+    dlgText.innerHTML = rendered.map((l, i) =>
+      '<div class="ln">' + l + (i === rendered.length - 1 ? '<span class="typing-cursor"></span>' : '') + '</div>'
+    ).join('');
+    charIdx++;
+  }, 35);
 
   // Start the game loop
   startCountdown();
