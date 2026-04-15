@@ -1,0 +1,27 @@
+<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_13639_37750)">
+<mask id="mask0_13639_37750" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="-1" y="-1" width="20" height="20">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M-0.478516 18.4492H18.4965V-0.525757H-0.478516V18.4492Z" fill="white"/>
+</mask>
+<g mask="url(#mask0_13639_37750)">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M9.00894 0.0255127C5.10069 0.0255127 1.92969 3.19651 1.92969 7.10476C1.92969 8.60551 2.41269 9.98776 3.20994 11.1405C4.22769 12.633 5.08344 12.7005 5.32119 13.8705H12.6974C12.9517 12.921 13.5539 12.6413 14.3002 11.7848C14.3594 11.7173 14.4277 11.6408 14.4869 11.5643C14.6054 11.412 14.7247 11.2508 14.8514 11.0558C15.6487 9.89401 16.0724 8.52076 16.0724 7.11301C16.0717 3.19651 12.9089 0.0337627 9.00069 0.0337627" fill="url(#paint0_linear_13639_37750)"/>
+</g>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M5.32031 13.8623V15.5243C5.32031 16.8721 6.50756 17.9746 7.85531 17.9746H10.1533C11.5011 17.9746 12.6883 16.8638 12.6883 15.5243V13.8623H5.32031Z" fill="#83909D"/>
+<mask id="mask1_13639_37750" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="-1" y="-1" width="20" height="20">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M-0.478516 18.4492H18.4965V-0.525757H-0.478516V18.4492Z" fill="white"/>
+</mask>
+<g mask="url(#mask1_13639_37750)">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M5.32031 15.2866H12.6966V13.8623H5.32031V15.2866Z" fill="#67778C"/>
+</g>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M11.9785 7.815L10.0757 8.4765C9.9932 8.4765 9.9932 8.559 9.9932 8.559L9.3317 10.5442C9.2492 10.875 8.8352 10.875 8.6702 10.5442L8.0087 8.6415C8.0087 8.559 7.9262 8.559 7.9262 8.559L6.02345 7.8975C5.6927 7.73175 5.6927 7.3185 6.02345 7.236L7.9262 6.5745C8.0087 6.5745 8.0087 6.492 8.0087 6.492L8.6702 4.58925C8.7527 4.2585 9.1667 4.2585 9.3317 4.58925L9.9932 6.40875C9.9932 6.49125 10.0757 6.49125 10.0757 6.49125L11.9785 7.15275C12.3092 7.3185 12.3092 7.73175 11.9785 7.81425V7.815Z" fill="#FF7E00"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_13639_37750" x1="9.00106" y1="0.0255127" x2="9.00106" y2="13.8705" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FFD86C"/>
+<stop offset="1" stop-color="#FFC41B"/>
+</linearGradient>
+<clipPath id="clip0_13639_37750">
+<rect width="18" height="18" fill="white"/>
+</clipPath>
+</defs>
+</svg>
