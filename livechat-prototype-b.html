@@ -834,10 +834,17 @@ body{
 /* 바텀시트 핸들 */
 .chat-sheet-handle{
   display:none;
+  width:100%;height:24px;
+  cursor:pointer;
+  margin:0 auto 4px;
+  position:relative;
+  flex-shrink:0;
+}
+.chat-sheet-handle::after{
+  content:'';position:absolute;
+  left:50%;top:50%;transform:translate(-50%,-50%);
   width:40px;height:4px;border-radius:2px;
   background:var(--fill-normal);
-  cursor:pointer;
-  margin:0 auto 10px;
 }
 .chat-feed-outer.expanded .chat-sheet-handle{display:block}
 
