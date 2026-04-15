@@ -311,8 +311,6 @@ body{
 /* AI에게 보내기 — 부스터 */
 .chat-msg.type-ai-boost{
   background:linear-gradient(135deg,rgba(0,0,0,0.55),rgba(60,200,168,0.10));
-  box-shadow:inset 3px 0 0 var(--primary-normal);
-  padding-left:10px;
 }
 .chat-msg.type-ai-boost .msg-user{color:var(--primary-normal);font-size:13px;font-weight:700}
 .chat-msg.type-ai-boost .msg-text{color:var(--label-normal);font-size:13px}
@@ -2128,11 +2126,8 @@ function generateDummyMessage() {
     // ~20% 확률: AI에게 보내기 (유료 메시지)
     const user = pick(DUMMY_USERS);
     const text = pick(DUMMY_MESSAGES);
-    const isBoost = Math.random() > 0.7; // 30% 부스터
-    const cost = isBoost ? 15 : 10;
-    const msgType = isBoost ? 'ai-boost' : 'ai';
-    addChatMessage(user.name, user.img, text, cost, false, msgType);
-    trackMirSpent(user.name, cost);
+    addChatMessage(user.name, user.img, text, 10, false, 'ai');
+    trackMirSpent(user.name, 10);
   } else {
     // 75% 확률: 무료 일반 채팅
     const user = pick(DUMMY_USERS);
@@ -3261,8 +3256,8 @@ function init() {
       // AI 메시지
       const text = pick(DUMMY_MESSAGES);
       const isBoost = Math.random() > 0.7;
-      addChatMessage(user.name, user.img, text, isBoost ? 15 : 10, false, isBoost ? 'ai-boost' : 'ai');
-      trackMirSpent(user.name, isBoost ? 15 : 10);
+      addChatMessage(user.name, user.img, text, 10, false, 'ai');
+      trackMirSpent(user.name, 10);
     } else {
       // 무료 채팅
       const text = pick(DUMMY_FREE_MSGS);
