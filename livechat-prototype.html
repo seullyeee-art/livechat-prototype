@@ -629,7 +629,7 @@ body{
   display:flex;flex-direction:column;justify-content:flex-end;
 }
 /* 대사 모드 하단→상단 그라디언트 (화면 전체) */
-.screen.dlg-gradient::before{
+.screen.dlg-gradient::after{
   content:'';position:absolute;left:0;right:0;bottom:0;
   height:100%;z-index:6;pointer-events:none;
   background:linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
