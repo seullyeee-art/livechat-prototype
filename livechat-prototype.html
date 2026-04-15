@@ -2209,6 +2209,7 @@ function openGeneralChat() {
   // 캐릭터 이름 숨김
   document.getElementById('dlgNameRow').style.display = 'none';
   setInputMode('free');
+  showToastTop('💬 시청자 채팅모드로 전환되었습니다');
   // 스크롤을 맨 아래로
   const wrap = document.getElementById('chatFeedWrap');
   setTimeout(() => { wrap.scrollTop = wrap.scrollHeight; }, 100);
@@ -2226,6 +2227,7 @@ function closeGeneralChat() {
   // 캐릭터 이름 복원
   document.getElementById('dlgNameRow').style.display = '';
   setInputMode('ai');
+  showToastTop('✨ 캐릭터 채팅모드로 전환되었습니다');
 }
 
 function selectChatAmount(btn, amount) {
