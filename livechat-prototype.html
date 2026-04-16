@@ -159,6 +159,8 @@ body{
 .header-timer-val{font-weight:700;font-variant-numeric:tabular-nums}
 .header-timer.danger{color:var(--status-negative)}
 .header-timer.danger .header-timer-val{color:var(--status-negative)}
+.header-timer .hourglass.float{animation:floatBounce 1.5s ease-in-out infinite}
+@keyframes floatBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 
 /* ═══ CHARACTER AREA ═══ */
 .char-area{
@@ -2647,7 +2649,9 @@ function enterDialogueMode(triggerMsg, winnerUser, winnerAmount) {
   headerTimer.classList.remove('danger');
   document.querySelector('.header-timer-label').textContent = '';
   document.getElementById('headerTimerVal').textContent = '대사 진행중';
-  document.querySelector('.header-timer .hourglass').textContent = '💬';
+  const hg = document.querySelector('.header-timer .hourglass');
+  hg.textContent = '💬';
+  hg.classList.add('float');
   aiResponse.classList.remove('show');
   document.getElementById('screen').classList.add('dlg-gradient');
 
@@ -2805,7 +2809,9 @@ function exitDialogueMode(delayBeforeTimer) {
 
   // 타이머 복원
   document.querySelector('.header-timer-label').textContent = '다음턴까지';
-  document.querySelector('.header-timer .hourglass').textContent = '⏳';
+  const hgRestore = document.querySelector('.header-timer .hourglass');
+  hgRestore.textContent = '⏳';
+  hgRestore.classList.remove('float');
   headerTimer.style.display = '';
   headerTimer.style.opacity = '1';
 
