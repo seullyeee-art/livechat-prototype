@@ -259,7 +259,11 @@ body{
   -webkit-mask-image:linear-gradient(to bottom, transparent 0%, black 20px);
   mask-image:linear-gradient(to bottom, transparent 0%, black 20px);
 }
-.chat-feed-outer.compact{max-height:70px}
+.chat-feed-outer.compact{max-height:none}
+.chat-feed-outer.compact .chat-feed-wrap{max-height:70px}
+.chat-feed-outer.compact .chat-sheet-handle{display:none}
+.chat-feed-outer.compact .chat-rank-bar{display:none}
+.chat-feed-outer.compact .chat-sheet-input{display:block;pointer-events:auto}
 .chat-feed-wrap{
   position:relative;overflow:hidden;pointer-events:none;
   max-height:inherit;
@@ -308,13 +312,6 @@ body{
 .chat-msg.type-ai .msg-text{color:var(--label-normal);font-size:13px}
 .chat-msg.type-ai .msg-avatar{width:20px;height:20px}
 
-/* AI에게 보내기 — 부스터 */
-.chat-msg.type-ai-boost{
-  background:linear-gradient(135deg,rgba(0,0,0,0.55),rgba(60,200,168,0.10));
-}
-.chat-msg.type-ai-boost .msg-user{color:var(--primary-normal);font-size:13px;font-weight:700}
-.chat-msg.type-ai-boost .msg-text{color:var(--label-normal);font-size:13px}
-.chat-msg.type-ai-boost .msg-avatar{width:20px;height:20px}
 
 /* 후원 메시지 — 치지직 스타일 카드 */
 .chat-msg.type-donate{
@@ -449,6 +446,7 @@ body{
   width:44px;height:44px;border-radius:50%;
   object-fit:cover;
   border:2px solid rgba(60,200,168,0.3);
+  display:none;
   flex-shrink:0;
 }
 .slot-info{display:flex;flex-direction:column;gap:2px;min-width:0;overflow:hidden}
@@ -825,25 +823,54 @@ body{
 .chat-rank-bar .rank-name{font-weight:600;max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--label-strong)}
 .chat-rank-bar .rank-amount{color:var(--label-strong);font-weight:600}
 
-/* 채팅창 접기 버튼 (확장 시만 표시) */
-.chat-collapse-btn{
-  display:none;position:absolute;top:4px;right:4px;z-index:10;
-  width:28px;height:28px;border-radius:50%;
-  background:rgba(0,0,0,0.4);border:none;
-  color:var(--label-neutral);cursor:pointer;
-  align-items:center;justify-content:center;
-  transition:all 0.2s;
+/* 바텀시트 핸들 */
+.chat-sheet-handle{
+  display:none;
+  width:40px;height:4px;
+  background:var(--fill-normal);
+  border-radius:2px;
+  cursor:pointer;
+  margin:10px auto;
+  flex-shrink:0;
 }
-.chat-collapse-btn:hover{background:rgba(0,0,0,0.6);color:var(--label-strong)}
-.chat-feed-outer.expanded .chat-collapse-btn{display:flex}
+.chat-feed-outer.expanded .chat-sheet-handle{display:block}
 
-/* 일반채팅 확장 상태 */
+/* 바텀시트 안 인풋 */
+.chat-sheet-input{
+  display:none;
+  padding:8px 0 max(8px, env(safe-area-inset-bottom));
+}
+.chat-feed-outer.expanded .chat-sheet-input{display:block;margin-top:auto;flex-shrink:0}
+
+/* 일반채팅 확장 상태 — 바텀시트 스타일 */
 .chat-feed-outer.expanded{
-  max-height:40vh;min-height:40vh;
+  max-height:50vh;min-height:40vh;
   pointer-events:auto;
+  background:linear-gradient(180deg, rgba(30,30,30,0.97) 0%, rgba(18,18,18,0.99) 100%);
+  border-radius:20px 20px 0 0;
+  padding:12px 16px 0;
+  margin-left:-16px;margin-right:-16px;
+  box-shadow:0 -4px 30px rgba(0,0,0,0.6);
+  border-top:1px solid rgba(255,255,255,0.06);
+  display:flex;flex-direction:column;
 }
 .chat-feed-outer.expanded .chat-feed-wrap{
+  flex:1;min-height:0;
+  max-height:none;
+  overflow-y:auto;
   pointer-events:auto;
+  -webkit-mask-image:none;
+  mask-image:none;
+  display:flex;flex-direction:column;
+}
+.chat-feed-outer.expanded .chat-feed{
+  justify-content:flex-end;
+  min-height:100%;
+}
+.chat-feed-outer.expanded .chat-msg{background:none;padding:4px 0}
+.chat-feed-outer.expanded .chat-msg.type-donate{
+  background:linear-gradient(135deg,rgba(147,51,234,0.35),rgba(126,34,206,0.25));
+  padding:10px 14px;
 }
 
 /* ═══ DONATE TRIGGER BUTTON (Chzzk style) ═══ */
@@ -1559,33 +1586,32 @@ input[type=number]{-moz-appearance:textfield}
       <div class="ai-text" id="aiText"><span class="typing-cursor"></span></div>
     </div>
 
-    <!-- Chat feed (대사와 인풋 사이) -->
+    <!-- Chat feed + Input 통합 (바텀시트) -->
     <div class="chat-feed-outer compact" id="chatFeedOuter">
+      <div class="chat-sheet-handle" id="chatSheetHandle" onclick="closeGeneralChat()"></div>
       <div class="chat-rank-bar" id="chatRankBar" onclick="openRanking()"></div>
-      <button class="chat-collapse-btn" id="chatCollapseBtn" onclick="closeGeneralChat()">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
       <div class="chat-feed-wrap scrollable" id="chatFeedWrap">
         <div class="chat-feed" id="chatFeed"></div>
       </div>
-    </div>
-
-    <!-- Input bar (2줄 구조) -->
-    <div class="input-bar-row">
-      <div class="input-bar ai-mode" id="inputBar">
-        <div class="input-row2">
-          <textarea class="input-field" id="inputField" rows="1" placeholder="캐릭터에게 메세지 보내세요 · 💎 10" maxlength="100" oninput="autoGrow(this);updateCharCount();updateSendBtn()"></textarea>
-          <span class="char-count" id="charCount" style="display:none">0/200</span>
-          <button class="chat-toggle-btn" id="chatToggleBtn" onclick="toggleGeneralChat()" title="일반 채팅">
-            <svg class="icon-chat" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M17 9.5C17 13.09 13.87 16 10 16C9.13 16 8.3 15.85 7.54 15.58L3.5 17L4.78 13.94C3.67 12.73 3 11.18 3 9.5C3 5.91 6.13 3 10 3C13.87 3 17 5.91 17 9.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <svg class="icon-close" width="18" height="18" viewBox="0 0 18 18" fill="none" style="display:none"><path d="M13.5 4.5L4.5 13.5M4.5 4.5l9 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-          </button>
-          <button class="send-btn" id="sendBtn" onclick="sendMyMessage()" disabled>
-            <svg viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
+      <!-- 인풋 (바텀시트 안) -->
+      <div class="chat-sheet-input" id="chatSheetInput">
+        <div class="input-bar-row">
+          <div class="input-bar ai-mode" id="inputBar">
+            <div class="input-row2">
+              <textarea class="input-field" id="inputField" rows="1" placeholder="캐릭터에게 메세지 보내세요 · 💎 10" maxlength="100" oninput="autoGrow(this);updateCharCount();updateSendBtn()"></textarea>
+              <span class="char-count" id="charCount" style="display:none">0/200</span>
+              <button class="chat-toggle-btn" id="chatToggleBtn" onclick="toggleGeneralChat()" title="일반 채팅">
+                <svg class="icon-chat" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M17 9.5C17 13.09 13.87 16 10 16C9.13 16 8.3 15.85 7.54 15.58L3.5 17L4.78 13.94C3.67 12.73 3 11.18 3 9.5C3 5.91 6.13 3 10 3C13.87 3 17 5.91 17 9.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <svg class="icon-close" width="18" height="18" viewBox="0 0 18 18" fill="none" style="display:none"><path d="M13.5 4.5L4.5 13.5M4.5 4.5l9 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </button>
+              <button class="send-btn" id="sendBtn" onclick="sendMyMessage()" disabled>
+                <svg viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+          </div>
+          <button class="donate-trigger-btn" id="donateTriggerBtn" onclick="openDonation()" title="후원하기"><svg width="20" height="20" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M9.00039 2.10754L5.75664 0.777787C5.64513 0.732123 5.52409 0.714606 5.40421 0.726779C5.28433 0.738953 5.16928 0.780445 5.06923 0.847593C4.96917 0.914742 4.88718 1.00548 4.83049 1.11181C4.77379 1.21814 4.74414 1.33679 4.74414 1.45729V4.93354H13.2551V1.47904C13.2551 1.35588 13.2248 1.23462 13.1668 1.12597C13.1089 1.01731 13.025 0.924604 12.9227 0.856033C12.8204 0.787463 12.7028 0.745139 12.5803 0.732801C12.4577 0.720462 12.3341 0.738489 12.2201 0.785288L9.00039 2.10754Z" fill="url(#giftBow)"/><path fill-rule="evenodd" clip-rule="evenodd" d="M1.875 5.08057V14.8306C1.875 15.2284 2.03304 15.6099 2.31434 15.8912C2.59564 16.1725 2.97718 16.3306 3.375 16.3306H14.625C15.0228 16.3306 15.4044 16.1725 15.6857 15.8912C15.967 15.6099 16.125 15.2284 16.125 14.8306V5.08057C16.125 4.68274 15.967 4.30121 15.6857 4.01991C15.4044 3.7386 15.0228 3.58057 14.625 3.58057H3.375C2.97718 3.58057 2.59564 3.7386 2.31434 4.01991C2.03304 4.30121 1.875 4.68274 1.875 5.08057Z" fill="url(#giftBox)"/><path fill-rule="evenodd" clip-rule="evenodd" d="M7.875 16.3306H10.125V3.50012H7.875V16.3306Z" fill="url(#giftStripe)"/><defs><linearGradient id="giftBow" x1="8.99964" y1="0.723022" x2="8.99964" y2="4.93354" gradientUnits="userSpaceOnUse"><stop stop-color="#D6E3F1"/><stop offset="1" stop-color="#9DCCFF"/></linearGradient><linearGradient id="giftBox" x1="9" y1="3.58057" x2="9" y2="16.3306" gradientUnits="userSpaceOnUse"><stop stop-color="#64A8FF"/><stop offset="1" stop-color="#C770E4"/></linearGradient><linearGradient id="giftStripe" x1="9" y1="2.83044" x2="9" y2="16.3304" gradientUnits="userSpaceOnUse"><stop stop-color="#D6E3F1"/><stop offset="1" stop-color="#9DCCFF"/></linearGradient></defs></svg></button>
         </div>
       </div>
-      <button class="donate-trigger-btn" id="donateTriggerBtn" onclick="openDonation()" title="후원하기"><svg width="20" height="20" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M9.00039 2.10754L5.75664 0.777787C5.64513 0.732123 5.52409 0.714606 5.40421 0.726779C5.28433 0.738953 5.16928 0.780445 5.06923 0.847593C4.96917 0.914742 4.88718 1.00548 4.83049 1.11181C4.77379 1.21814 4.74414 1.33679 4.74414 1.45729V4.93354H13.2551V1.47904C13.2551 1.35588 13.2248 1.23462 13.1668 1.12597C13.1089 1.01731 13.025 0.924604 12.9227 0.856033C12.8204 0.787463 12.7028 0.745139 12.5803 0.732801C12.4577 0.720462 12.3341 0.738489 12.2201 0.785288L9.00039 2.10754Z" fill="url(#giftBow)"/><path fill-rule="evenodd" clip-rule="evenodd" d="M1.875 5.08057V14.8306C1.875 15.2284 2.03304 15.6099 2.31434 15.8912C2.59564 16.1725 2.97718 16.3306 3.375 16.3306H14.625C15.0228 16.3306 15.4044 16.1725 15.6857 15.8912C15.967 15.6099 16.125 15.2284 16.125 14.8306V5.08057C16.125 4.68274 15.967 4.30121 15.6857 4.01991C15.4044 3.7386 15.0228 3.58057 14.625 3.58057H3.375C2.97718 3.58057 2.59564 3.7386 2.31434 4.01991C2.03304 4.30121 1.875 4.68274 1.875 5.08057Z" fill="url(#giftBox)"/><path fill-rule="evenodd" clip-rule="evenodd" d="M7.875 16.3306H10.125V3.50012H7.875V16.3306Z" fill="url(#giftStripe)"/><defs><linearGradient id="giftBow" x1="8.99964" y1="0.723022" x2="8.99964" y2="4.93354" gradientUnits="userSpaceOnUse"><stop stop-color="#D6E3F1"/><stop offset="1" stop-color="#9DCCFF"/></linearGradient><linearGradient id="giftBox" x1="9" y1="3.58057" x2="9" y2="16.3306" gradientUnits="userSpaceOnUse"><stop stop-color="#64A8FF"/><stop offset="1" stop-color="#C770E4"/></linearGradient><linearGradient id="giftStripe" x1="9" y1="2.83044" x2="9" y2="16.3304" gradientUnits="userSpaceOnUse"><stop stop-color="#D6E3F1"/><stop offset="1" stop-color="#9DCCFF"/></linearGradient></defs></svg></button>
     </div>
 
     <div class="bottom-spacer"></div>
@@ -2053,7 +2079,7 @@ function checkBalanceSufficient() {
 }
 
 // ═══ CHAT FEED ═══
-// msgType: 'free' | 'ai' | 'ai-boost' | 'donate'
+// msgType: 'free' | 'ai' | 'donate' | 'creator'
 function addChatMessage(user, img, text, amount, isMe, msgType) {
   msgType = msgType || 'free';
   const feed = document.getElementById('chatFeed');
@@ -2089,7 +2115,7 @@ function addChatMessage(user, img, text, amount, isMe, msgType) {
 
   feed.appendChild(msg);
   // 룰렛 후보는 AI 메시지만
-  if (msgType === 'ai' || msgType === 'ai-boost') {
+  if (msgType === 'ai') {
     currentTurnMessages.push(msg);
   }
 
@@ -2387,7 +2413,7 @@ function triggerRoulette() {
   const pool = [];
   candidates.forEach(m => {
     const mType = m.dataset.msgType || 'ai';
-    let weight = (mType === 'ai-boost') ? 3 : 1;
+    let weight = 1;
     for (let i = 0; i < weight; i++) pool.push(m);
   });
 
@@ -3255,7 +3281,6 @@ function init() {
     if (Math.random() > 0.7) {
       // AI 메시지
       const text = pick(DUMMY_MESSAGES);
-      const isBoost = Math.random() > 0.7;
       addChatMessage(user.name, user.img, text, 10, false, 'ai');
       trackMirSpent(user.name, 10);
     } else {
