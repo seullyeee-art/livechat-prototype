@@ -3011,12 +3011,12 @@ function showDonationAlert(userName, amount, message) {
   const displayText = (message ? message : '💎 ' + fmt(amount) + ' 후원!');
   trackMirSpent(userName, amount);
   addToJackpot(amount);
-  // 10미르 이하: 일반 채팅과 동일 (하이라이트/팝업/GIF/TTS 없음)
-  if (amount <= 10) {
-    addChatMessage(userName, img, displayText, amount, userName === '나', 'free');
+  // 100미르 미만: 채팅 카드만 (팝업/사운드/TTS 없음)
+  if (amount < 100) {
+    addChatMessage(userName, img, displayText, amount, userName === '나', 'donate');
     return;
   }
-  // 10미르 초과: 후원 하이라이트 + 팝업 + 사운드
+  // 100미르 이상: 채팅 카드 + 사운드 + TTS + GIF 팝업
   addChatMessage(userName, img, displayText, amount, userName === '나', 'donate');
   SFX_DONATE.currentTime = 0;
   SFX_DONATE.play().catch(()=>{});
