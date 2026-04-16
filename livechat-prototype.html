@@ -3040,6 +3040,8 @@ function processAlertQueue() {
   document.getElementById('daAmountNum').textContent = fmt(amount);
   document.getElementById('daMessage').textContent = message || '';
 
+  alert.classList.remove('show');
+  void alert.offsetWidth; // reflow 강제
   alert.classList.add('show');
 
   setTimeout(() => {
@@ -3057,8 +3059,8 @@ function startDummyDonations() {
       if (true) { // 슬롯/대사 중에도 후원 계속 발생
         const user = pick(DUMMY_USERS);
         const msg = pick(DUMMY_DONATION_MSGS);
-        const amounts = [10,50,100,300];
-        const weights = [0.4,0.3,0.2,0.1];
+        const amounts = [100,300,500,1000];
+        const weights = [0.5,0.25,0.15,0.1];
         const r = Math.random();
         let amt = 10, cumul = 0;
         for (let i = 0; i < amounts.length; i++) {
