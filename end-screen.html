@@ -15,6 +15,8 @@
   --fill-normal:rgba(148,163,184,0.22);
   --fill-alternative:rgba(148,163,184,0.12);
   --accent-gold:#e8c87a;
+  --silver:#b0c4d8;
+  --bronze:#c9956a;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{
@@ -24,6 +26,7 @@ body{
   min-height:100vh;
   display:flex;justify-content:center;
   position:relative;
+  overflow-x:hidden;
 }
 body::before{
   content:'';position:fixed;inset:0;z-index:0;
@@ -36,6 +39,13 @@ body::after{
   content:'';position:fixed;inset:0;z-index:0;
   background:rgba(0,0,0,0.55);
 }
+
+/* 떠다니는 스파클 파티클 */
+.sparkle-canvas{
+  position:fixed;inset:0;z-index:0;
+  pointer-events:none;
+}
+
 .container{
   max-width:430px;width:100%;
   min-height:100vh;
@@ -48,64 +58,107 @@ body::after{
   width:80px;height:80px;border-radius:50%;overflow:hidden;
   border:3px solid var(--primary-normal);
   margin-bottom:16px;
+  animation:profilePulse 3s ease-in-out infinite;
+}
+@keyframes profilePulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(19,187,143,0.3)}
+  50%{box-shadow:0 0 20px 8px rgba(19,187,143,0.15)}
 }
 .profile img{width:100%;height:100%;object-fit:cover}
-.title{font-size:20px;font-weight:700;color:var(--label-strong);margin-bottom:6px}
-.subtitle{font-size:14px;color:var(--label-alternative);margin-bottom:32px}
-.section-title{font-size:16px;font-weight:700;color:var(--label-strong);margin-bottom:16px}
-.stats{
-  display:flex;gap:24px;margin-bottom:32px;
+.title{
+  font-size:20px;font-weight:700;color:var(--label-strong);margin-bottom:6px;
+  animation:fadeInUp 0.6s ease-out both;
 }
-.stat-item{text-align:center}
-.stat-val{font-size:24px;font-weight:800;color:var(--label-strong)}
-.stat-label{font-size:11px;color:var(--label-alternative);margin-top:2px}
-/* 포디움 */
-.podium{display:flex;gap:12px;justify-content:center;align-items:flex-end;margin-bottom:24px;width:100%}
-.podium-item{display:flex;flex-direction:column;align-items:center;gap:6px}
-.podium-item.first{order:2}
-.podium-item.second{order:1}
-.podium-item.third{order:3}
-.podium-avatar{display:none}
-.podium-medal{width:20px;height:20px;margin-top:-4px}
-.podium-name{font-size:12px;font-weight:600;color:var(--label-strong);max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.podium-amount{font-size:11px;color:var(--accent-gold);font-weight:600}
-.podium-bar{
-  width:48px;border-radius:8px 8px 0 0;
-  background:linear-gradient(180deg,rgba(232,200,122,0.2),rgba(232,200,122,0.05));
+.subtitle{
+  font-size:14px;color:var(--label-alternative);margin-bottom:32px;
+  animation:fadeInUp 0.6s 0.1s ease-out both;
 }
-.podium-item.first .podium-bar{height:80px;background:linear-gradient(180deg,rgba(232,200,122,0.3),rgba(232,200,122,0.08))}
-.podium-item.second .podium-bar{height:56px}
-.podium-item.third .podium-bar{height:40px}
+.section-title{
+  font-size:16px;font-weight:700;color:var(--label-strong);margin-bottom:16px;
+  animation:fadeInUp 0.6s 0.2s ease-out both;
+}
+@keyframes fadeInUp{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
 /* 리스트 */
-.rank-list{width:100%;display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
+.rank-list{width:100%;display:flex;flex-direction:column;margin-bottom:24px}
 .rank-item{
   display:flex;align-items:center;gap:12px;
-  padding:12px 14px;border-radius:0;
-  background:none;
-  border:none;
-  border-bottom:1px solid rgba(255,255,255,0.08);
+  padding:14px 14px;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  animation:fadeInUp 0.4s ease-out both;
 }
+.rank-item:nth-child(1){animation-delay:0.3s}
+.rank-item:nth-child(2){animation-delay:0.4s}
+.rank-item:nth-child(3){animation-delay:0.5s}
+.rank-item:nth-child(4){animation-delay:0.55s}
+.rank-item:nth-child(5){animation-delay:0.6s}
+.rank-item:nth-child(6){animation-delay:0.65s}
+.rank-item:nth-child(7){animation-delay:0.7s}
+.rank-item:nth-child(8){animation-delay:0.75s}
+.rank-item:nth-child(9){animation-delay:0.8s}
+.rank-item:nth-child(10){animation-delay:0.85s}
+
 .rank-num{width:20px;font-size:13px;font-weight:700;color:var(--label-alternative);text-align:center;display:flex;align-items:center;justify-content:center}
-.rank-medal{width:20px;height:20px;object-fit:contain}
-.rank-item.rank-1st,.rank-item.rank-2nd,.rank-item.rank-3rd{background:none;border:none;border-bottom:1px solid rgba(255,255,255,0.08)}
+.rank-medal{width:22px;height:22px;object-fit:contain}
 .rank-avatar{display:none}
-.rank-name{flex:1;font-size:13px;font-weight:600;color:var(--label-normal)}
-.rank-amount{font-size:13px;font-weight:700;color:var(--accent-gold)}
-.rank-item.me{border:none;background:none}
-.rank-item.me .rank-num{color:var(--primary-normal)}
-.me-badge{
-  display:inline-block;padding:1px 5px;border-radius:4px;
-  background:rgba(19,187,143,0.15);color:var(--primary-normal);
-  font-size:9px;font-weight:700;margin-left:4px;
+.rank-name{flex:1;font-size:14px;font-weight:600;color:var(--label-normal)}
+.rank-amount{font-size:13px;font-weight:700;color:var(--label-neutral);font-variant-numeric:tabular-nums}
+
+/* 1등 — 골드 shimmer */
+.rank-item.rank-1st{
+  padding:16px 14px;
+}
+.rank-item.rank-1st .rank-name{
+  font-size:15px;font-weight:800;
+  background:linear-gradient(90deg, #e8c87a 0%, #f5e6b8 40%, #e8c87a 60%, #d4a853 100%);
+  background-size:200% 100%;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  animation:goldShimmer 3s ease-in-out infinite;
+}
+@keyframes goldShimmer{
+  0%{background-position:100% 0}
+  100%{background-position:-100% 0}
+}
+.rank-item.rank-1st .rank-amount{
+  color:var(--accent-gold);font-size:14px;font-weight:800;
+}
+
+/* 2등 — 실버 */
+.rank-item.rank-2nd .rank-name{
+  font-size:14px;font-weight:700;color:var(--silver);
+}
+.rank-item.rank-2nd .rank-amount{
+  color:var(--silver);font-weight:700;
+}
+
+/* 3등 — 브론즈 */
+.rank-item.rank-3rd .rank-name{
+  font-size:14px;font-weight:700;color:var(--bronze);
+}
+.rank-item.rank-3rd .rank-amount{
+  color:var(--bronze);font-weight:700;
+}
+
+/* 4등 이하 */
+.rank-item:not(.rank-1st):not(.rank-2nd):not(.rank-3rd) .rank-amount{
+  color:var(--label-alternative);
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none !important}
 }
 </style>
 </head>
 <body>
+<canvas class="sparkle-canvas" id="sparkleCanvas"></canvas>
 <div class="container">
   <div class="profile"><img src="./images/char-profile.png" alt=""></div>
   <div class="title">라이브가 종료되었습니다</div>
   <div class="subtitle">시청해주셔서 감사합니다 💚</div>
-
 
   <div class="section-title">👑 후원 랭킹</div>
 
@@ -137,35 +190,89 @@ body::after{
     </div>
     <div class="rank-item">
       <span class="rank-num">6</span>
-      <div class="rank-avatar"></div>
       <span class="rank-name">괴무리</span>
       <span class="rank-amount">💎 700</span>
     </div>
     <div class="rank-item">
       <span class="rank-num">7</span>
-      <div class="rank-avatar"></div>
       <span class="rank-name">바비형아</span>
       <span class="rank-amount">💎 500</span>
     </div>
     <div class="rank-item">
       <span class="rank-num">8</span>
-      <div class="rank-avatar"></div>
       <span class="rank-name">따스하루</span>
       <span class="rank-amount">💎 400</span>
     </div>
     <div class="rank-item">
       <span class="rank-num">9</span>
-      <div class="rank-avatar"></div>
       <span class="rank-name">육개장한사발</span>
       <span class="rank-amount">💎 200</span>
     </div>
     <div class="rank-item">
       <span class="rank-num">10</span>
-      <div class="rank-avatar"></div>
       <span class="rank-name">붉은달</span>
       <span class="rank-amount">💎 150</span>
     </div>
   </div>
 </div>
+
+<script>
+// 떠다니는 스파클 파티클
+const canvas = document.getElementById('sparkleCanvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+function createParticle() {
+  return {
+    x: Math.random() * canvas.width,
+    y: canvas.height + 10,
+    size: Math.random() * 2 + 0.5,
+    speedY: -(Math.random() * 0.4 + 0.15),
+    speedX: (Math.random() - 0.5) * 0.3,
+    opacity: Math.random() * 0.5 + 0.2,
+    life: 0,
+    maxLife: Math.random() * 400 + 200,
+  };
+}
+
+for (let i = 0; i < 30; i++) {
+  const p = createParticle();
+  p.y = Math.random() * canvas.height;
+  p.life = Math.random() * p.maxLife;
+  particles.push(p);
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  particles.forEach((p, i) => {
+    p.x += p.speedX;
+    p.y += p.speedY;
+    p.life++;
+
+    const progress = p.life / p.maxLife;
+    const alpha = progress < 0.1 ? progress * 10 : progress > 0.8 ? (1 - progress) * 5 : 1;
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(232, 200, 122, ${p.opacity * alpha})`;
+    ctx.fill();
+
+    if (p.life >= p.maxLife || p.y < -10) {
+      particles[i] = createParticle();
+    }
+  });
+
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
 </body>
 </html>
