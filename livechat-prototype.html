@@ -1954,6 +1954,26 @@ const TIER_REACTIONS = {
   1000:['...이건 단순한 후원이 아니잖아. 너, 나한테 전부를 걸고 있는 거지?','전설이 되고 싶은 거야? ...좋아, 내가 직접 너를 전설로 만들어줄게.','내 이야기의 주인공 자리... 네게 줄게.'],
 };
 
+// ═══ SOUND ═══
+const SFX_ROULETTE = new Audio('./sound/Roulette.MP3');
+const SFX_DONATE = new Audio('./sound/후원소리.MP3');
+SFX_ROULETTE.volume = 0.5;
+SFX_DONATE.volume = 0.6;
+
+// ═══ TTS (Web Speech API) ═══
+function speakTTS(text) {
+  if (!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text.replace(/[""]/g, ''));
+  utter.lang = 'ko-KR';
+  utter.rate = 1.0;
+  utter.pitch = 1.0;
+  const voices = speechSynthesis.getVoices();
+  const koVoice = voices.find(v => v.lang.startsWith('ko'));
+  if (koVoice) utter.voice = koVoice;
+  speechSynthesis.speak(utter);
+}
+
 // ═══ STATE ═══
 let balance = 2480;
 let jackpot = 0;
@@ -2452,9 +2472,11 @@ function triggerRoulette() {
     strip.appendChild(div);
   });
 
-  // Show overlay
+  // Show overlay + 사운드
   const overlay = document.getElementById('slotOverlay');
   overlay.classList.add('show');
+  SFX_ROULETTE.currentTime = 0;
+  SFX_ROULETTE.play().catch(()=>{});
   machine.classList.remove('winner-flash');
 
   // Animate: start fast, decelerate
@@ -2978,8 +3000,14 @@ function showDonationAlert(userName, amount, message) {
     addChatMessage(userName, img, displayText, amount, userName === '나', 'free');
     return;
   }
-  // 10미르 초과: 후원 하이라이트 + 팝업
+  // 10미르 초과: 후원 하이라이트 + 팝업 + 사운드
   addChatMessage(userName, img, displayText, amount, userName === '나', 'donate');
+  SFX_DONATE.currentTime = 0;
+  SFX_DONATE.play().catch(()=>{});
+  // 후원 메시지 TTS 읽기
+  if (message) {
+    setTimeout(() => speakTTS(userName + '님. ' + message), 500);
+  }
   // 50미르 이상: 팝업 알림 + GIF
   alertQueue.push({userName, amount, message});
   if (!alertShowing) processAlertQueue();
