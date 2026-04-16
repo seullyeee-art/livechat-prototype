@@ -15,8 +15,8 @@
   --fill-normal:rgba(148,163,184,0.22);
   --fill-alternative:rgba(148,163,184,0.12);
   --accent-gold:#e8c87a;
-  --silver:#b0c4d8;
-  --bronze:#c9956a;
+  --silver:#7ecbcb;
+  --bronze:#d4956e;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{
@@ -127,17 +127,27 @@ body::after{
   color:var(--accent-gold);font-size:14px;font-weight:800;
 }
 
-/* 2등 — 실버 */
+/* 2등 — 민트 실버 */
 .rank-item.rank-2nd .rank-name{
-  font-size:14px;font-weight:700;color:var(--silver);
+  font-size:14px;font-weight:700;
+  background:linear-gradient(90deg, #7ecbcb 0%, #a8e6e6 50%, #7ecbcb 100%);
+  background-size:200% 100%;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  animation:goldShimmer 4s ease-in-out infinite;
 }
 .rank-item.rank-2nd .rank-amount{
   color:var(--silver);font-weight:700;
 }
 
-/* 3등 — 브론즈 */
+/* 3등 — 코퍼 브론즈 */
 .rank-item.rank-3rd .rank-name{
-  font-size:14px;font-weight:700;color:var(--bronze);
+  font-size:14px;font-weight:700;
+  background:linear-gradient(90deg, #d4956e 0%, #f0c4a0 50%, #d4956e 100%);
+  background-size:200% 100%;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  animation:goldShimmer 5s ease-in-out infinite;
 }
 .rank-item.rank-3rd .rank-amount{
   color:var(--bronze);font-weight:700;
