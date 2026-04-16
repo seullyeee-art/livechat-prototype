@@ -144,6 +144,17 @@ body{
   white-space:nowrap;
   transition:all 0.3s;
 }
+.sound-toggle{
+  display:flex;align-items:center;gap:4px;
+  height:32px;padding:0 10px;border-radius:16px;
+  background:rgba(0,0,0,0.25);
+  border:none;cursor:pointer;
+  font-family:inherit;
+  transition:all 0.2s;
+}
+.sound-toggle:active{background:rgba(0,0,0,0.4)}
+.sound-icon{font-size:12px}
+.sound-label{font-size:11px;font-weight:600;color:var(--label-neutral);white-space:nowrap}
 .header-timer-label{font-size:11px;font-weight:400;color:var(--label-neutral)}
 .header-timer-val{font-weight:700;font-variant-numeric:tabular-nums}
 .header-timer.danger{color:var(--status-negative)}
@@ -1518,6 +1529,7 @@ input[type=number]{-moz-appearance:textfield}
       </div>
     </div>
     <div class="header-right">
+      <button class="sound-toggle" id="soundToggle" onclick="toggleSound()"><span class="sound-icon">🔊</span><span class="sound-label">사운드 ON</span></button>
       <div class="header-timer" id="headerTimer">
         <span class="header-timer-label">다음턴까지</span>
         <span class="hourglass">⏳</span>
@@ -1933,16 +1945,28 @@ const SFX_DONATE = new Audio('./sound/후원소리.MP3');
 const BGM = new Audio('./sound/bgm.MP3');
 BGM.volume = 0.15;
 BGM.loop = true;
+let soundMuted = false;
 document.addEventListener('click', function startBGM() {
   BGM.play().catch(()=>{});
   document.removeEventListener('click', startBGM);
 }, {once: true});
+
+function toggleSound() {
+  soundMuted = !soundMuted;
+  BGM.muted = soundMuted;
+  SFX_ROULETTE.muted = soundMuted;
+  SFX_DONATE.muted = soundMuted;
+  document.getElementById('soundToggle').innerHTML = soundMuted
+    ? '<span class="sound-icon">🔇</span><span class="sound-label">사운드 OFF</span>'
+    : '<span class="sound-icon">🔊</span><span class="sound-label">사운드 ON</span>';
+  if (soundMuted) speechSynthesis.cancel();
+}
 SFX_ROULETTE.volume = 0.5;
 SFX_DONATE.volume = 0.6;
 
 // ═══ TTS (Web Speech API) ═══
 function speakTTS(text) {
-  if (!('speechSynthesis' in window)) return;
+  if (!('speechSynthesis' in window) || soundMuted) return;
   speechSynthesis.cancel();
   const utter = new SpeechSynthesisUtterance(text.replace(/[""]/g, ''));
   utter.lang = 'ko-KR';
