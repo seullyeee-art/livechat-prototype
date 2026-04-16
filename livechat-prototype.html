@@ -1955,6 +1955,7 @@ document.addEventListener('click', function startBGM() {
 
 function toggleSound() {
   soundMuted = !soundMuted;
+  if (!soundMuted) BGM.play().catch(()=>{});
   BGM.muted = soundMuted;
   SFX_ROULETTE.muted = soundMuted;
   SFX_DONATE.muted = soundMuted;
