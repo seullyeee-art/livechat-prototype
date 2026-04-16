@@ -3006,7 +3006,7 @@ function showDonationAlert(userName, amount, message) {
   SFX_DONATE.play().catch(()=>{});
   // 후원 메시지 TTS 읽기
   if (message) {
-    setTimeout(() => speakTTS(userName + '님. ' + message), 500);
+    setTimeout(() => speakTTS(message), 500);
   }
   // 50미르 이상: 팝업 알림 + GIF
   alertQueue.push({userName, amount, message});
