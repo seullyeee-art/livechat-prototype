@@ -1968,15 +1968,25 @@ SFX_ROULETTE.volume = 0.5;
 SFX_DONATE.volume = 0.6;
 
 // ═══ TTS (Web Speech API) ═══
+let ttsVoices = [];
+function loadVoices() {
+  ttsVoices = speechSynthesis.getVoices();
+}
+if ('speechSynthesis' in window) {
+  loadVoices();
+  speechSynthesis.addEventListener('voiceschanged', loadVoices);
+}
 function speakTTS(text) {
   if (!('speechSynthesis' in window) || soundMuted) return;
   speechSynthesis.cancel();
-  const utter = new SpeechSynthesisUtterance(text.replace(/[""]/g, ''));
+  const clean = text.replace(/[""💎]/g, '').trim();
+  if (!clean) return;
+  const utter = new SpeechSynthesisUtterance(clean);
   utter.lang = 'ko-KR';
   utter.rate = 1.0;
   utter.pitch = 1.0;
-  const voices = speechSynthesis.getVoices();
-  const koVoice = voices.find(v => v.lang.startsWith('ko'));
+  utter.volume = 1.0;
+  const koVoice = ttsVoices.find(v => v.lang === 'ko-KR') || ttsVoices.find(v => v.lang.startsWith('ko'));
   if (koVoice) utter.voice = koVoice;
   speechSynthesis.speak(utter);
 }
