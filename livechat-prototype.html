@@ -136,13 +136,31 @@ body{
 .header-stat .stat-icon{font-size:12px}
 .header-stat .stat-val{font-weight:600;color:var(--label-normal)}
 
-.header-timer{
-  display:flex;align-items:center;gap:4px;
-  height:32px;padding:0 10px;border-radius:16px;
-  background:rgba(0,0,0,0.25);
-  font-size:12px;color:var(--label-normal);
-  white-space:nowrap;
-  transition:all 0.3s;
+.chat-timer-banner{
+  display:flex;align-items:center;gap:10px;
+  padding:4px 4px 10px 4px;margin:0 0 2px 0;
+  color:var(--label-normal);
+  pointer-events:none;
+  transition:color 0.3s;
+}
+.chat-timer-banner .timer-segments{
+  display:flex;flex:1;gap:1px;align-items:center;
+  padding:2px;border-radius:4px;
+  background:rgba(255,255,255,0.06);
+}
+.chat-timer-banner .timer-segments .seg{
+  flex:1;height:8px;border-radius:1px;
+  background:linear-gradient(135deg,#38bdf8,#2dd4bf);
+  box-shadow:0 0 6px rgba(56,189,248,0.55), inset 0 0 4px rgba(255,255,255,0.3);
+  transition:background 0.3s ease-out, box-shadow 0.3s ease-out, opacity 0.15s ease-out;
+}
+.chat-timer-banner.warn .timer-segments .seg:not(.empty){
+  background:#facc15;
+  box-shadow:0 0 6px rgba(250,204,21,0.6), inset 0 0 4px rgba(255,255,255,0.3);
+}
+.chat-timer-banner .timer-segments .seg.empty{
+  background:rgba(255,255,255,0.04);
+  box-shadow:none;
 }
 .sound-toggle{
   display:flex;align-items:center;gap:4px;
@@ -155,11 +173,22 @@ body{
 .sound-toggle:active{background:rgba(0,0,0,0.4)}
 .sound-icon{font-size:12px}
 .sound-label{font-size:11px;font-weight:600;color:var(--label-neutral);white-space:nowrap}
-.header-timer-label{font-size:11px;font-weight:400;color:var(--label-neutral)}
-.header-timer-val{font-weight:700;font-variant-numeric:tabular-nums}
-.header-timer.danger{color:var(--status-negative)}
-.header-timer.danger .header-timer-val{color:var(--status-negative)}
-.header-timer .hourglass.float{animation:floatBounce 1.5s ease-in-out infinite}
+.header-timer-label{font-size:11px;font-weight:500;color:var(--label-neutral);letter-spacing:0.02em;flex-shrink:0}
+.header-timer-val{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--label-strong);line-height:1;flex-shrink:0;min-width:32px;text-align:right}
+.chat-timer-banner.hide-by-mode{display:none}
+.chat-timer-banner.streaming .timer-segments{display:none}
+.chat-timer-banner.streaming .header-timer-val{display:none}
+.chat-timer-banner.streaming{justify-content:center;text-align:center}
+.chat-timer-banner.streaming .header-timer-label{color:var(--primary-normal);font-weight:700;text-align:center;width:100%}
+.chat-timer-banner.danger .header-timer-label{color:var(--status-negative);opacity:0.8}
+.chat-timer-banner.danger .header-timer-val{color:var(--status-negative);animation:timerTextPulse 0.6s ease-in-out infinite}
+.chat-timer-banner.danger .timer-segments .seg:not(.empty){
+  background:#ef4444;
+  box-shadow:0 0 8px rgba(239,68,68,0.7), inset 0 0 4px rgba(255,255,255,0.3);
+  animation:timerSegPulse 0.6s ease-in-out infinite;
+}
+@keyframes timerTextPulse{0%,100%{opacity:1}50%{opacity:0.55}}
+@keyframes timerSegPulse{0%,100%{opacity:1;transform:scaleY(1)}50%{opacity:0.6;transform:scaleY(0.85)}}
 @keyframes floatBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 
 /* ═══ CHARACTER AREA ═══ */
@@ -180,7 +209,7 @@ body{
 }
 .char-img-overlay{
   position:absolute;inset:0;z-index:2;
-  background-size:contain;background-position:center bottom;background-repeat:no-repeat;
+  background-size:auto 100%;background-position:center bottom;background-repeat:no-repeat;
   opacity:0;transition:opacity 1.2s ease-in-out;
   pointer-events:none;
 }
@@ -306,7 +335,22 @@ body{
 .chat-msg .msg-user.overflow{text-overflow:clip;animation:nickScroll 3s linear infinite}
 @keyframes nickScroll{0%,10%{transform:translateX(0)}90%,100%{transform:translateX(calc(-100% + 80px))}}
 .chat-msg .msg-text{font-weight:400;word-break:break-word;vertical-align:middle}
-.mir-heart{width:14px;height:14px;margin-right:2px;vertical-align:middle;object-fit:contain}
+.mir-heart{width:16px;height:16px;margin-right:3px;vertical-align:middle;object-fit:contain;filter:drop-shadow(0 0 2px rgba(0,0,0,0.4))}
+.mir-ico{display:inline-block;width:1em;height:1em;vertical-align:-0.14em;margin-right:2px;object-fit:contain}
+.charge-amount-display{
+  display:flex;align-items:center;gap:10px;
+  padding:14px 16px;border-radius:12px;
+  background:var(--fill-alternative);
+  border:1px solid var(--line-alternative);
+}
+.charge-tier-ico{
+  width:48px;height:48px;flex-shrink:0;object-fit:contain;
+  animation:mirFloat 2.5s ease-in-out infinite;
+}
+@keyframes mirFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.charge-amount-val{font-size:24px;font-weight:800;color:var(--label-strong);font-variant-numeric:tabular-nums;line-height:1}
+.charge-amount-unit{font-size:14px;font-weight:600;color:var(--label-neutral);margin-left:2px}
+.charge-tier-chips{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .chat-msg .msg-me{
   display:inline-block;padding:1px 5px;border-radius:4px;
   background:rgba(60,200,168,0.2);
@@ -401,7 +445,7 @@ body{
 }
 
 /* 랭킹 뱃지 (닉네임 옆) */
-.rank-icon{width:16px;height:16px;margin-right:2px;vertical-align:middle;object-fit:contain}
+.rank-icon{width:18px;height:18px;margin-right:3px;vertical-align:middle;object-fit:contain;filter:drop-shadow(0 0 3px rgba(255,200,100,0.4))}
 
 @keyframes goldGlow{
   0%,100%{box-shadow:0 0 0 0 rgba(232,200,122,0)}
@@ -672,36 +716,47 @@ body{
 .dlg-text.is-user{color:#e5dba0}
 .dlg-text .ln{margin-bottom:2px}
 
-/* Loading indicator */
+/* Loading indicator (Anthropic thinking style) — dlg-skip-row 안 */
 .dlg-loading-area{
-  display:flex;align-items:center;gap:10px;
-  padding:10px 0;
+  display:none;align-items:center;gap:8px;
+  height:40px;line-height:1;
 }
-.dlg-loading-avatar{
-  width:32px;height:32px;border-radius:50%;overflow:hidden;flex-shrink:0;
-  border:1.5px solid var(--accent-gold);
+.dlg-loading-spark{
+  flex-shrink:0;width:26px;height:26px;
+  animation:sparkPulse 1.8s ease-in-out infinite;
 }
-.dlg-loading-avatar img{width:100%;height:100%;object-fit:cover}
-.dlg-loading-dots{display:flex;gap:4px;align-items:center}
-.dlg-loading-dots span{
-  width:6px;height:6px;border-radius:50%;
-  background:var(--label-alternative);
-  animation:dotBounce 1.2s infinite ease-in-out;
+@keyframes sparkPulse{
+  0%,100%{opacity:0.55;transform:scale(0.9)}
+  50%{opacity:1;transform:scale(1)}
 }
-.dlg-loading-dots span:nth-child(2){animation-delay:0.15s}
-.dlg-loading-dots span:nth-child(3){animation-delay:0.3s}
-@keyframes dotBounce{
-  0%,80%,100%{transform:translateY(0);opacity:0.4}
-  40%{transform:translateY(-6px);opacity:1}
+.dlg-loading-text{
+  font-size:16px;font-weight:500;letter-spacing:0.1px;white-space:nowrap;
+  background:linear-gradient(90deg,
+    rgba(255,255,255,0.35) 0%,
+    rgba(255,255,255,0.35) 35%,
+    rgba(255,255,255,1) 50%,
+    rgba(255,255,255,0.35) 65%,
+    rgba(255,255,255,0.35) 100%);
+  background-size:200% 100%;
+  background-position:100% 0;
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+  animation:shimmerText 2s linear infinite;
 }
-.dlg-loading-text{font-size:15px;font-weight:400;line-height:1.65;color:var(--label-normal);letter-spacing:0.1px;text-shadow:0 0 6px rgba(0,0,0,0.9)}
+@keyframes shimmerText{
+  0%{background-position:100% 0}
+  100%{background-position:-100% 0}
+}
 
 /* Skip button */
 .dlg-skip-row{
   display:flex;align-items:center;justify-content:space-between;
-  padding-top:4px;margin-top:8px;
+  height:40px;padding:0;margin-top:14px;
 }
-.dlg-progress{font-size:12px;color:var(--label-alternative);font-weight:400}
+.dlg-progress{
+  display:inline-flex;align-items:center;height:40px;
+  font-size:16px;color:var(--label-neutral);font-weight:600;letter-spacing:0.03em;line-height:1;
+}
 .dlg-skip-btn{
   padding:7px 14px;border-radius:16px;
   background:rgba(255,255,255,0.08);
@@ -725,6 +780,7 @@ body{
 .input-bar-row>.donate-trigger-btn{flex-shrink:0}
 .input-bar{
   flex:1;min-width:0;
+  position:relative;
   border-radius:16px;
   background:rgba(0,0,0,0.35);
   backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
@@ -732,6 +788,34 @@ body{
   overflow:hidden;
   transition:border-color 0.3s, box-shadow 0.3s;
 }
+.input-bar.timer-ambient{
+  border:2px solid #38bdf8;
+  box-shadow:0 0 10px rgba(56,189,248,0.35);
+  overflow:visible;
+  transition:border-color 0.4s, box-shadow 0.4s;
+}
+.input-bar.timer-ambient.warn{
+  border-color:#facc15;
+  box-shadow:0 0 10px rgba(250,204,21,0.4);
+}
+.input-bar.timer-ambient.danger{
+  border-color:#ef4444;
+  box-shadow:0 0 12px rgba(239,68,68,0.55);
+  animation:ambPulse 0.7s ease-in-out infinite;
+}
+@keyframes ambPulse{0%,100%{box-shadow:0 0 8px rgba(239,68,68,0.4)}50%{box-shadow:0 0 16px rgba(239,68,68,0.75)}}
+.input-bar .timer-pill{
+  position:absolute;top:-10px;left:12px;z-index:2;
+  padding:2px 8px;border-radius:10px;
+  background:rgba(0,0,0,0.85);
+  border:1px solid var(--line-alternative);
+  font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;
+  color:var(--label-strong);line-height:1.3;
+  pointer-events:none;
+}
+.input-bar.timer-ambient.warn .timer-pill{color:#facc15;border-color:rgba(250,204,21,0.5)}
+.input-bar.timer-ambient.danger .timer-pill{color:#ef4444;border-color:rgba(239,68,68,0.5)}
+.chat-timer-banner.hidden{display:none}
 
 /* ═══ INPUT ROW 2: 입력 + 부스터 + 전송 ═══ */
 .input-row2{
@@ -806,17 +890,38 @@ body{
 /* ═══ AI MODE ═══ */
 .input-bar.ai-mode{border-color:rgba(60,200,168,0.3);box-shadow:0 0 12px rgba(60,200,168,0.15)}
 
-/* ═══ GENERAL CHAT TOGGLE ═══ */
-.chat-toggle-btn{
-  width:32px;height:32px;min-width:32px;border-radius:8px;
-  background:none;border:none;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  transition:all 0.2s;flex-shrink:0;padding:0;
-  color:var(--label-neutral);
+/* ═══ MODE TABS (AI | 유저) ═══ */
+.mode-tabs{
+  display:inline-flex;align-items:center;gap:4px;
+  flex-shrink:0;padding:0 4px;
 }
-.chat-toggle-btn:hover{background:var(--fill-alternative)}
-.chat-toggle-btn:active{transform:scale(0.92)}
-.chat-toggle-btn.active{color:var(--primary-normal)}
+.mode-tabs .mt-opt{
+  background:none;border:none;padding:2px 2px;
+  font-family:inherit;font-size:12px;font-weight:500;letter-spacing:0.02em;
+  color:var(--label-alternative);
+  cursor:pointer;
+  transition:color 0.2s, font-weight 0.2s;
+}
+.mode-tabs .mt-opt.active{color:var(--primary-normal);font-weight:700}
+.mode-tabs .mt-opt[data-mode="free"].active{color:var(--accent-gold)}
+.mode-tabs .mt-opt:active{opacity:0.6}
+.mode-tabs .mt-sep{color:var(--label-alternative);font-size:11px;opacity:0.3}
+
+/* ═══ CHAT PANEL TOGGLE (chevron) ═══ */
+.chat-toggle-chevron{
+  position:absolute;top:4px;right:8px;z-index:3;
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(0,0,0,0.55);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:1px solid var(--line-alternative);
+  color:var(--label-normal);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;pointer-events:auto;
+  transition:transform 0.3s, background 0.2s;
+}
+.chat-toggle-chevron:active{transform:scale(0.92)}
+.chat-feed-outer.expanded .chat-toggle-chevron{transform:rotate(180deg)}
+.chat-feed-outer.expanded .chat-toggle-chevron:active{transform:rotate(180deg) scale(0.92)}
 
 
 /* 채팅 상단 랭킹 바 */
@@ -831,10 +936,44 @@ body{
 }
 .chat-feed-outer.expanded .chat-rank-bar{display:flex;cursor:pointer}
 
-.chat-rank-bar .rank-entry{display:flex;align-items:center;gap:3px;white-space:nowrap}
-.chat-rank-bar .rank-bar-icon{width:18px;height:18px;object-fit:contain}
-.chat-rank-bar .rank-name{font-weight:600;max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--label-strong)}
-.chat-rank-bar .rank-amount{color:var(--label-strong);font-weight:600}
+/* 치지직/틱톡 스타일 후원 TOP 3 */
+.chat-rank-bar{
+  align-items:center;gap:12px;
+  padding:12px 14px;
+  background:linear-gradient(90deg, rgba(255,193,125,0.10), rgba(147,51,234,0.10));
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:16px;
+  margin-bottom:8px;overflow-x:auto;scrollbar-width:none;
+}
+.chat-rank-bar::-webkit-scrollbar{display:none}
+.chat-rank-bar .rank-label{
+  font-size:11px;font-weight:700;letter-spacing:0.04em;color:var(--accent-gold);
+  white-space:nowrap;flex-shrink:0;
+}
+.chat-rank-bar .rank-entry{
+  display:flex;align-items:center;gap:8px;flex:1 1 0;min-width:0;
+  padding:0 0 0 12px;background:none;border:none;
+  border-left:1px solid rgba(255,255,255,0.12);
+}
+.chat-rank-bar .rank-entry.rank-1{border-left:none;padding-left:0}
+.chat-rank-bar .rank-meta{flex:1;min-width:0}
+.chat-rank-bar .rank-medal-ico{
+  width:28px;height:28px;flex-shrink:0;object-fit:contain;
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+.chat-rank-bar .rank-meta{display:flex;flex-direction:column;gap:1px;line-height:1.2}
+.chat-rank-bar .rank-name{
+  font-size:11px;font-weight:600;color:var(--label-strong);
+  max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.chat-rank-bar .rank-amount{
+  display:inline-flex;align-items:center;gap:2px;
+  font-size:11px;font-weight:700;color:var(--accent-gold);line-height:1;
+}
+.chat-rank-bar .rank-amount .mir-ico{width:10px;height:10px;margin:0;vertical-align:middle}
+.chat-rank-bar .rank-more{
+  margin-left:auto;color:var(--label-alternative);font-size:16px;flex-shrink:0;
+}
 
 /* 바텀시트 핸들 */
 .chat-sheet-handle{
@@ -846,7 +985,7 @@ body{
   margin:10px auto;
   flex-shrink:0;
 }
-.chat-feed-outer.expanded .chat-sheet-handle{display:block}
+.chat-feed-outer.expanded .chat-sheet-handle{display:none}
 
 /* 바텀시트 안 인풋 */
 .chat-sheet-input{
@@ -859,12 +998,13 @@ body{
 .chat-feed-outer.expanded{
   max-height:50vh;min-height:40vh;
   pointer-events:auto;
-  background:linear-gradient(180deg, rgba(30,30,30,0.97) 0%, rgba(18,18,18,0.99) 100%);
+  background:linear-gradient(180deg, rgba(30,30,30,0.90) 0%, rgba(18,18,18,0.90) 100%);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   border-radius:20px 20px 0 0;
   padding:12px 16px 0;
   margin-left:-16px;margin-right:-16px;
-  box-shadow:0 -4px 30px rgba(0,0,0,0.6);
-  border-top:1px solid rgba(255,255,255,0.06);
+  box-shadow:0 -4px 30px rgba(0,0,0,0.5);
+  border-top:1px solid rgba(255,255,255,0.08);
   display:flex;flex-direction:column;
 }
 .chat-feed-outer.expanded .chat-feed-wrap{
@@ -888,15 +1028,48 @@ body{
 
 /* ═══ DONATE TRIGGER BUTTON (Chzzk style) ═══ */
 .donate-trigger-btn{
-  width:38px;height:38px;min-width:38px;border-radius:10px;
+  width:40px;height:40px;min-width:40px;border-radius:12px;
   background:none;
   border:none;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
-  transition:all 0.2s;flex-shrink:0;font-size:20px;
-  padding:0;
+  transition:transform 0.2s;flex-shrink:0;
+  padding:0;position:relative;
 }
-.donate-trigger-btn svg{width:24px;height:24px}
-.donate-trigger-btn:hover{background:var(--fill-alternative);border-radius:8px}
+.donate-trigger-btn .holo-wrap{
+  position:relative;display:flex;align-items:center;justify-content:center;
+  width:34px;height:34px;border-radius:50%;
+  background:radial-gradient(circle at 30% 25%, rgba(255,225,160,0.45), rgba(255,107,157,0.25) 45%, rgba(107,194,255,0.18) 80%, transparent 100%);
+  box-shadow:
+    0 0 12px rgba(255,180,100,0.35),
+    0 0 24px rgba(255,107,157,0.2),
+    inset 0 1px 2px rgba(255,255,255,0.3);
+  overflow:hidden;
+}
+.donate-trigger-btn .holo-wrap::before{
+  content:'';position:absolute;inset:0;border-radius:50%;
+  background:conic-gradient(from 0deg,
+    rgba(255,107,157,0.0),
+    rgba(255,225,160,0.5),
+    rgba(107,194,255,0.35),
+    rgba(198,107,255,0.45),
+    rgba(255,107,157,0.0));
+  animation:holoSpin 3.5s linear infinite;
+  mix-blend-mode:screen;opacity:0.55;
+}
+.donate-trigger-btn .holo-wrap svg{position:relative;z-index:2;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.5))}
+.donate-trigger-btn .holo-shimmer{
+  position:absolute;inset:-50%;z-index:3;pointer-events:none;
+  background:linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.55) 50%, transparent 60%);
+  animation:holoShimmer 2.8s ease-in-out infinite;
+  mix-blend-mode:overlay;
+}
+@keyframes holoSpin{to{transform:rotate(360deg)}}
+@keyframes holoShimmer{
+  0%{transform:translateX(-60%) rotate(8deg);opacity:0}
+  20%{opacity:0.8}
+  45%{transform:translateX(60%) rotate(8deg);opacity:0}
+  100%{transform:translateX(60%) rotate(8deg);opacity:0}
+}
 .donate-trigger-btn:active{transform:scale(0.92)}
 
 /* ═══ CHAT AMOUNT CHIPS (legacy, hidden) ═══ */
@@ -1049,15 +1222,27 @@ input[type=number]{-moz-appearance:textfield}
 .tts-voice-btn:active{transform:scale(0.95)}
 
 .send-btn{
-  width:28px;height:28px;min-width:28px;border-radius:14px;
-  background:linear-gradient(105deg, var(--primary-normal), var(--primary-strong));
-  border:none;cursor:pointer;
+  width:40px;height:40px;min-width:40px;padding:0;
+  background:transparent;border:none;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
-  transition:all 0.2s;flex-shrink:0;
+  transition:transform 0.15s, opacity 0.2s;flex-shrink:0;
 }
 .send-btn:active{transform:scale(0.92)}
-.send-btn svg{width:16px;height:16px}
 .send-btn:disabled{opacity:0.4;pointer-events:none}
+.send-btn.locked{opacity:0.4;cursor:not-allowed}
+.send-btn img{display:block;width:40px;height:40px}
+
+.narration-btn{
+  width:24px;height:24px;min-width:24px;flex-shrink:0;margin-right:-4px;
+  padding:0;border:none;background:none;cursor:pointer;
+  display:none;align-items:center;justify-content:center;
+  border-radius:6px;
+  transition:background 0.15s, transform 0.15s, opacity 0.15s;
+}
+.narration-btn img{display:block;opacity:0.7;transition:opacity 0.2s}
+.input-bar.ai-mode .narration-btn{display:inline-flex}
+.narration-btn:hover img{opacity:1}
+.narration-btn:active{transform:scale(0.92)}
 
 /* AI mode send button — keep mint (same as default) */
 
@@ -1503,7 +1688,7 @@ input[type=number]{-moz-appearance:textfield}
             <div class="guide-mode-desc">캐릭터에게 직접 말을 걸어요<br>턴마다 한 명의 메시지가 선택돼요</div>
           </div>
           <div class="guide-sub">
-            <div class="guide-sub-text">💎 10미르가 소모되며, 턴마다 한 명이 선택돼요</div>
+            <div class="guide-sub-text"><img class="mir-ico" src="./images/icon/mir.png" alt="미르">10미르가 소모되며, 턴마다 한 명이 선택돼요</div>
           </div>
         </div>
       </div>
@@ -1532,11 +1717,6 @@ input[type=number]{-moz-appearance:textfield}
     </div>
     <div class="header-right">
       <button class="sound-toggle" id="soundToggle" onclick="toggleSound()"><span class="sound-icon">🔊</span><span class="sound-label">사운드 ON</span></button>
-      <div class="header-timer" id="headerTimer">
-        <span class="header-timer-label">다음턴까지</span>
-        <span class="hourglass">⏳</span>
-        <span class="header-timer-val" id="headerTimerVal">30s</span>
-      </div>
       <div class="header-stat">
         <span class="stat-icon">👁</span>
         <span class="stat-val" id="viewerCount">1,247</span>
@@ -1547,8 +1727,8 @@ input[type=number]{-moz-appearance:textfield}
   <!-- Winner popup -->
   <div class="winner-popup" id="winnerPopup">
     <div class="wp-profile"><img src="./images/char-profile.png" alt="이설"></div>
-    <div class="wp-donor"><span class="wp-name" id="wpName">유저명</span>님이 <span id="wpAmountInline">💎 100</span> 후원</div>
-    <div class="wp-amount" id="wpAmount">💎 100</div>
+    <div class="wp-donor"><span class="wp-name" id="wpName">유저명</span>님이 <span id="wpAmountInline"><img class="mir-ico" src="./images/icon/mir.png" alt="미르">100</span> 후원</div>
+    <div class="wp-amount" id="wpAmount"><img class="mir-ico" src="./images/icon/mir.png" alt="미르">100</div>
     <div class="wp-message" id="wpMessage">메시지 내용</div>
   </div>
 
@@ -1582,14 +1762,12 @@ input[type=number]{-moz-appearance:textfield}
       </div>
       <div class="dlg-wrap">
         <div class="dlg-text is-dialogue" id="dlgText"></div>
-        <!-- Loading (shown between user msg and AI response) -->
-        <div class="dlg-loading-area" id="dlgLoading" style="display:none">
-          <div class="dlg-loading-avatar"><img id="dlgLoadingImg" src="./images/char-profile.png" alt="이설" onerror="this.parentElement.textContent='이'"></div>
-          <div class="dlg-loading-dots"><span></span><span></span><span></span></div>
-          <div class="dlg-loading-text" id="dlgLoadingText">답변을 생각하고 있어요...</div>
-        </div>
       </div>
       <div class="dlg-skip-row">
+        <div class="dlg-loading-area" id="dlgLoading" style="display:none">
+          <img class="dlg-loading-spark" src="./images/icon/AI Generate A filled.svg" width="26" height="26" alt="" aria-hidden="true">
+          <span class="dlg-loading-text" id="dlgLoadingText">잠시 기다려주세요....</span>
+        </div>
         <span class="dlg-progress" id="dlgProgress"></span>
       </div>
     </div>
@@ -1602,28 +1780,81 @@ input[type=number]{-moz-appearance:textfield}
 
     <!-- Chat feed + Input 통합 (바텀시트) -->
     <div class="chat-feed-outer compact" id="chatFeedOuter">
-      <div class="chat-sheet-handle" id="chatSheetHandle" onclick="closeGeneralChat()"></div>
+      <button class="chat-toggle-chevron" id="chatToggleChevron" onclick="toggleGeneralChat()" aria-label="채팅 열기/닫기">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 10L8 6L12 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="chat-sheet-handle" id="chatSheetHandle" onclick="toggleGeneralChat()"></div>
       <div class="chat-rank-bar" id="chatRankBar" onclick="openRanking()"></div>
-      <div class="chat-feed-wrap scrollable" id="chatFeedWrap">
+      <div class="chat-feed-wrap scrollable" id="chatFeedWrap" onclick="handleChatFeedClick(event)">
         <div class="chat-feed" id="chatFeed"></div>
       </div>
       <!-- 인풋 (바텀시트 안) -->
       <div class="chat-sheet-input" id="chatSheetInput">
+        <div class="chat-timer-banner" id="headerTimer">
+          <span class="header-timer-label">다음턴까지</span>
+          <div class="timer-segments" id="timerSegments">
+            <span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span>
+          </div>
+          <span class="header-timer-val" id="headerTimerVal">30s</span>
+        </div>
         <div class="input-bar-row">
           <div class="input-bar ai-mode" id="inputBar">
             <div class="input-row2">
-              <textarea class="input-field" id="inputField" rows="1" placeholder="캐릭터에게 메세지 보내세요 · 💎 10" maxlength="100" oninput="autoGrow(this);updateCharCount();updateSendBtn()"></textarea>
+              <div class="mode-tabs" role="tablist" aria-label="채팅 모드">
+                <button class="mt-opt active" data-mode="ai" onclick="setInputMode('ai')" role="tab" aria-selected="true">AI</button>
+                <span class="mt-sep" aria-hidden="true">|</span>
+                <button class="mt-opt" data-mode="free" onclick="setInputMode('free')" role="tab" aria-selected="false">유저</button>
+              </div>
+              <textarea class="input-field" id="inputField" rows="1" placeholder="캐릭터에게 메세지 보내세요 · 10 미르" maxlength="100" oninput="autoGrow(this);updateCharCount();updateSendBtn()"></textarea>
               <span class="char-count" id="charCount" style="display:none">0/200</span>
-              <button class="chat-toggle-btn" id="chatToggleBtn" onclick="toggleGeneralChat()" title="일반 채팅">
-                <svg class="icon-chat" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M17 9.5C17 13.09 13.87 16 10 16C9.13 16 8.3 15.85 7.54 15.58L3.5 17L4.78 13.94C3.67 12.73 3 11.18 3 9.5C3 5.91 6.13 3 10 3C13.87 3 17 5.91 17 9.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <svg class="icon-close" width="18" height="18" viewBox="0 0 18 18" fill="none" style="display:none"><path d="M13.5 4.5L4.5 13.5M4.5 4.5l9 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <button class="narration-btn" id="narrationBtn" type="button" aria-label="묘사 추가" title="묘사 추가" onclick="insertNarrationMarkers()">
+                <img src="./images/icon/Trailing Content 2.svg" alt="" width="20" height="20">
               </button>
               <button class="send-btn" id="sendBtn" onclick="sendMyMessage()" disabled>
-                <svg viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <img src="./images/icon/Trailing Content.svg" alt="전송" width="28" height="28">
               </button>
             </div>
           </div>
-          <button class="donate-trigger-btn" id="donateTriggerBtn" onclick="openDonation()" title="후원하기"><svg width="20" height="20" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M9.00039 2.10754L5.75664 0.777787C5.64513 0.732123 5.52409 0.714606 5.40421 0.726779C5.28433 0.738953 5.16928 0.780445 5.06923 0.847593C4.96917 0.914742 4.88718 1.00548 4.83049 1.11181C4.77379 1.21814 4.74414 1.33679 4.74414 1.45729V4.93354H13.2551V1.47904C13.2551 1.35588 13.2248 1.23462 13.1668 1.12597C13.1089 1.01731 13.025 0.924604 12.9227 0.856033C12.8204 0.787463 12.7028 0.745139 12.5803 0.732801C12.4577 0.720462 12.3341 0.738489 12.2201 0.785288L9.00039 2.10754Z" fill="url(#giftBow)"/><path fill-rule="evenodd" clip-rule="evenodd" d="M1.875 5.08057V14.8306C1.875 15.2284 2.03304 15.6099 2.31434 15.8912C2.59564 16.1725 2.97718 16.3306 3.375 16.3306H14.625C15.0228 16.3306 15.4044 16.1725 15.6857 15.8912C15.967 15.6099 16.125 15.2284 16.125 14.8306V5.08057C16.125 4.68274 15.967 4.30121 15.6857 4.01991C15.4044 3.7386 15.0228 3.58057 14.625 3.58057H3.375C2.97718 3.58057 2.59564 3.7386 2.31434 4.01991C2.03304 4.30121 1.875 4.68274 1.875 5.08057Z" fill="url(#giftBox)"/><path fill-rule="evenodd" clip-rule="evenodd" d="M7.875 16.3306H10.125V3.50012H7.875V16.3306Z" fill="url(#giftStripe)"/><defs><linearGradient id="giftBow" x1="8.99964" y1="0.723022" x2="8.99964" y2="4.93354" gradientUnits="userSpaceOnUse"><stop stop-color="#D6E3F1"/><stop offset="1" stop-color="#9DCCFF"/></linearGradient><linearGradient id="giftBox" x1="9" y1="3.58057" x2="9" y2="16.3306" gradientUnits="userSpaceOnUse"><stop stop-color="#64A8FF"/><stop offset="1" stop-color="#C770E4"/></linearGradient><linearGradient id="giftStripe" x1="9" y1="2.83044" x2="9" y2="16.3304" gradientUnits="userSpaceOnUse"><stop stop-color="#D6E3F1"/><stop offset="1" stop-color="#9DCCFF"/></linearGradient></defs></svg></button>
+          <button class="donate-trigger-btn" id="donateTriggerBtn" onclick="openDonation()" title="후원하기">
+            <span class="holo-wrap">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Megaphone cone body -->
+                <path d="M3 10.5C3 9.67 3.67 9 4.5 9H5.5L15 5.5C16 5.1 17 5.8 17 6.9V17.1C17 18.2 16 18.9 15 18.5L5.5 15H4.5C3.67 15 3 14.33 3 13.5V10.5Z" fill="url(#holoBody)" stroke="url(#holoStroke)" stroke-width="1" stroke-linejoin="round"/>
+                <!-- Gold rim -->
+                <ellipse cx="17" cy="12" rx="1.6" ry="6.2" fill="url(#holoRim)"/>
+                <!-- Handle -->
+                <path d="M6 15L7 19.5C7.12 20.14 7.7 20.5 8.33 20.37C8.9 20.25 9.3 19.73 9.27 19.15L9 15.5" fill="url(#holoHandle)"/>
+                <!-- Highlight stripe -->
+                <path d="M5 10.5L14 7.5" stroke="rgba(255,255,255,0.7)" stroke-width="0.8" stroke-linecap="round"/>
+                <!-- Sparkle 1 -->
+                <circle cx="19.5" cy="6" r="0.8" fill="#fff"/>
+                <circle cx="19.5" cy="6" r="1.6" fill="#fff" opacity="0.35"/>
+                <!-- Sparkle 2 -->
+                <circle cx="21" cy="16" r="0.5" fill="#fff"/>
+                <defs>
+                  <linearGradient id="holoBody" x1="3" y1="5" x2="17" y2="19" gradientUnits="userSpaceOnUse">
+                    <stop offset="0" stop-color="#ff6b9d"/>
+                    <stop offset="0.5" stop-color="#c66bff"/>
+                    <stop offset="1" stop-color="#6bc2ff"/>
+                  </linearGradient>
+                  <linearGradient id="holoStroke" x1="3" y1="5" x2="17" y2="19" gradientUnits="userSpaceOnUse">
+                    <stop offset="0" stop-color="#ffbf5a"/>
+                    <stop offset="1" stop-color="#ff4785"/>
+                  </linearGradient>
+                  <linearGradient id="holoRim" x1="15.4" y1="6" x2="18.6" y2="18" gradientUnits="userSpaceOnUse">
+                    <stop offset="0" stop-color="#ffe58a"/>
+                    <stop offset="0.5" stop-color="#f7a93c"/>
+                    <stop offset="1" stop-color="#ffe58a"/>
+                  </linearGradient>
+                  <linearGradient id="holoHandle" x1="6" y1="15" x2="9.5" y2="20" gradientUnits="userSpaceOnUse">
+                    <stop offset="0" stop-color="#ffbf5a"/>
+                    <stop offset="1" stop-color="#c45200"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+              <span class="holo-shimmer"></span>
+            </span>
+          </button>
         </div>
       </div>
     </div>
@@ -1648,10 +1879,10 @@ input[type=number]{-moz-appearance:textfield}
     <div class="ds-amount-section">
       <div class="ds-amount-header">
         <span style="font-size:13px;font-weight:600;color:var(--label-neutral)">후원할 미르</span>
-        <div class="ds-balance-btn" onclick="openChargeSheet()">내 미르 💎 <span id="donateMyBal">2,480</span></div>
+        <div class="ds-balance-btn" onclick="openChargeSheet()">내 미르 <img class="mir-ico" src="./images/icon/mir.png" alt="미르"><span id="donateMyBal">2,480</span></div>
       </div>
       <div class="ds-amount-input-wrap" id="donateAmountWrap" style="margin:8px 0">
-        <span class="ds-amount-icon">💎</span>
+        <span class="ds-amount-icon"><img class="mir-ico" src="./images/icon/mir.png" alt="미르"></span>
         <input class="ds-amount-input" id="donateAmountInput" type="number" placeholder="금액 입력" min="1" oninput="onDonateAmountInput()">
         <button class="ds-amount-clear" onclick="clearDonateAmount()">✕</button>
       </div>
@@ -1691,9 +1922,9 @@ input[type=number]{-moz-appearance:textfield}
       </div>
     </div>
 
-    <div style="font-size:12px;color:var(--label-assistive);text-align:center;margin-bottom:10px">위 메시지가 채팅창에 후원 메시지로 표시됩니다</div>
+    <div style="font-size:12px;color:var(--label-assistive);text-align:center;margin-bottom:10px;line-height:1.5">채팅에 노출되고 100미르부터는 팝업으로 강조돼요<br>단, 캐릭터에게는 전달되지 않아요</div>
     <button class="ds-confirm" id="donateConfirmBtn" disabled onclick="processDonationFromSheet()">
-      <span id="donateConfirmText">💎 후원하기</span>
+      <span id="donateConfirmText"><img class="mir-ico" src="./images/icon/mir.png" alt="미르">후원하기</span>
     </button>
     <div class="sheet-spacer"></div>
   </div>
@@ -1708,24 +1939,27 @@ input[type=number]{-moz-appearance:textfield}
   </div>
   <div class="charge-balance-row">
     <span style="font-size:13px;color:var(--label-neutral)">현재 보유 미르</span>
-    <span style="font-size:15px;font-weight:700;color:var(--primary-normal)">💎 <span id="chargeCurrentBal">2,480</span></span>
+    <span style="font-size:15px;font-weight:700;color:var(--primary-normal)"><img class="mir-ico" src="./images/icon/mir.png" alt="미르"><span id="chargeCurrentBal">2,480</span></span>
   </div>
   <div style="width:100%;margin-bottom:12px">
     <div style="font-size:12px;color:var(--label-alternative);margin-bottom:8px">충전할 미르</div>
-    <div class="ds-amount-input-wrap">
-      <span class="ds-amount-icon">💎</span>
-      <input class="ds-amount-input" id="chargeAmountInput" type="number" value="1000" min="100">
+    <div class="ds-amount-input-wrap charge-amount-display">
+      <img class="charge-tier-ico" id="chargeTierIco" src="./images/mir-tiers/2.png" alt="미르">
+      <span class="charge-amount-val" id="chargeAmountVal">1,200</span>
+      <span class="charge-amount-unit">미르</span>
     </div>
   </div>
-  <div class="ds-preset-chips">
-    <button class="ds-preset" onclick="setChargeAmount(1000)">1,000</button>
-    <button class="ds-preset" onclick="setChargeAmount(5000)">5,000</button>
-    <button class="ds-preset selected" onclick="setChargeAmount(10000)">10,000</button>
-    <button class="ds-preset" onclick="setChargeAmount(50000)">50,000</button>
+  <div class="ds-preset-chips charge-tier-chips">
+    <button class="ds-preset" data-amt="600" onclick="setChargeAmount(600)">600</button>
+    <button class="ds-preset selected" data-amt="1200" onclick="setChargeAmount(1200)">1,200</button>
+    <button class="ds-preset" data-amt="4000" onclick="setChargeAmount(4000)">4,000</button>
+    <button class="ds-preset" data-amt="8000" onclick="setChargeAmount(8000)">8,000</button>
+    <button class="ds-preset" data-amt="16000" onclick="setChargeAmount(16000)">16,000</button>
+    <button class="ds-preset" data-amt="32000" onclick="setChargeAmount(32000)">32,000</button>
   </div>
   <div class="charge-price-row">
     <span style="font-size:13px;color:var(--label-neutral)">결제 금액</span>
-    <span style="font-size:15px;font-weight:700;color:var(--label-strong)" id="chargePrice">₩ 10,000</span>
+    <span style="font-size:15px;font-weight:700;color:var(--label-strong)" id="chargePrice">₩ 8,800</span>
   </div>
   <div style="display:flex;gap:10px;width:100%;margin-top:8px">
     <button class="ds-done" style="flex:1" onclick="closeChargeSheet()">취소</button>
@@ -1739,7 +1973,7 @@ input[type=number]{-moz-appearance:textfield}
   <div class="rs-handle"></div>
   <div class="rs-header">
     <span class="rs-title">👑 후원 랭킹</span>
-    <span class="rs-period">이번 주</span>
+    <span class="rs-period">실시간</span>
   </div>
   <div class="podium">
     <div class="podium-item second">
@@ -1748,7 +1982,7 @@ input[type=number]{-moz-appearance:textfield}
         <div class="podium-rank">2</div>
       </div>
       <div class="podium-name">별빛수호자</div>
-      <div class="podium-amount"><span class="mir-icon">💎</span> 1,200</div>
+      <div class="podium-amount"><img class="mir-ico" src="./images/icon/mir.png" alt="미르"> 1,200</div>
       <div class="podium-bar"></div>
     </div>
     <div class="podium-item first">
@@ -1757,7 +1991,7 @@ input[type=number]{-moz-appearance:textfield}
         <div class="podium-rank">1</div>
       </div>
       <div class="podium-name">달빛기사단</div>
-      <div class="podium-amount"><span class="mir-icon">💎</span> 3,500</div>
+      <div class="podium-amount"><img class="mir-ico" src="./images/icon/mir.png" alt="미르"> 3,500</div>
       <div class="podium-bar"></div>
     </div>
     <div class="podium-item third">
@@ -1766,7 +2000,7 @@ input[type=number]{-moz-appearance:textfield}
         <div class="podium-rank">3</div>
       </div>
       <div class="podium-name">은하의검</div>
-      <div class="podium-amount"><span class="mir-icon">💎</span> 800</div>
+      <div class="podium-amount"><img class="mir-ico" src="./images/icon/mir.png" alt="미르"> 800</div>
       <div class="podium-bar"></div>
     </div>
   </div>
@@ -1775,19 +2009,19 @@ input[type=number]{-moz-appearance:textfield}
       <span class="rank-num">4</span>
       <div class="rank-avatar"><img src="./images/rank-4.webp" alt="" onerror="this.style.display='none';this.parentElement.textContent='마'"></div>
       <div class="rank-info"><div class="rank-name">마법사의밤</div><div class="rank-sub">7일 연속 후원 🔥</div></div>
-      <span class="rank-amount">💎 640</span>
+      <span class="rank-amount"><img class="mir-ico" src="./images/icon/mir.png" alt="미르">640</span>
     </div>
     <div class="rank-item">
       <span class="rank-num">5</span>
       <div class="rank-avatar"><img src="./images/rank-5.webp" alt="" onerror="this.style.display='none';this.parentElement.textContent='흑'"></div>
       <div class="rank-info"><div class="rank-name">흑룡의눈</div><div class="rank-sub">첫 후원자 ⭐</div></div>
-      <span class="rank-amount">💎 500</span>
+      <span class="rank-amount"><img class="mir-ico" src="./images/icon/mir.png" alt="미르">500</span>
     </div>
     <div class="rank-item me">
       <span class="rank-num">12</span>
       <div class="rank-avatar"><img src="./images/rank-me.webp" alt="" onerror="this.style.display='none';this.parentElement.textContent='나'"></div>
       <div class="rank-info"><div class="rank-name">나 <span class="rank-badge">ME</span></div><div class="rank-sub">누적 150 미르</div></div>
-      <span class="rank-amount">💎 150</span>
+      <span class="rank-amount"><img class="mir-ico" src="./images/icon/mir.png" alt="미르">150</span>
     </div>
   </div>
   <div class="sheet-spacer"></div>
@@ -1798,7 +2032,7 @@ input[type=number]{-moz-appearance:textfield}
   <img class="da-gif" id="daGif" src="" alt="">
   <div class="da-donor">
     <span class="da-name" id="daName">유저명</span>님이
-    <span class="da-mir-icon">💎</span>
+    <span class="da-mir-icon"><img class="mir-ico" src="./images/icon/mir.png" alt="미르"></span>
     <span class="da-amount-num" id="daAmountNum">1,000</span> 후원!
   </div>
   <div class="da-message" id="daMessage">메시지 내용</div>
@@ -2043,18 +2277,29 @@ function updateChatRankBar() {
   const top = getTopRankers();
   if (top.length === 0) { bar.innerHTML = ''; bar.style.display = 'none'; return; }
   bar.style.display = '';
-  bar.innerHTML = top.map((t, i) =>
-    '<span class="rank-entry"><img class="rank-bar-icon" src="' + RANK_ICONS[i] + '" alt="">' +
-    '<span class="rank-name">' + t.name + '</span>' +
-    '<span class="rank-amount">' + fmt(userMirSpent[t.name]) + '</span></span>'
+  bar.innerHTML = '<span class="rank-label">TOP 3</span>' + top.map((t, i) =>
+    '<div class="rank-entry rank-' + (i+1) + '">' +
+      '<img class="rank-medal-ico" src="' + RANK_ICONS[i] + '" alt="' + (i+1) + '등">' +
+      '<div class="rank-meta">' +
+        '<span class="rank-name">' + t.name + '</span>' +
+        '<span class="rank-amount"><img class="mir-ico" src="./images/icon/mir.png" alt="미르">' + fmt(userMirSpent[t.name]) + '</span>' +
+      '</div>' +
+    '</div>'
   ).join('');
 }
 
 const RANK_ICONS = [
-  './images/icon/Frame 32.png',
-  './images/icon/Frame 31.png',
-  './images/icon/Frame 33.png'
+  './images/icon/medal-1.svg',
+  './images/icon/medal-2.svg',
+  './images/icon/medal-3.svg'
 ];
+function getFanBadgeIcon(spent) {
+  if (spent >= 1000) return './images/icon/heart-flame.svg';
+  if (spent >= 500)  return './images/icon/heart-purple.svg';
+  if (spent >= 100)  return './images/icon/heart-pink.svg';
+  if (spent >= 1)    return './images/icon/leaf.svg';
+  return null;
+}
 function getRankBadge(userName) {
   const top = getTopRankers();
   const entry = top.find(t => t.name === userName);
@@ -2064,6 +2309,12 @@ function getRankBadge(userName) {
 
 // ═══ DIALOGUE STATE ═══
 let dlgData = [];
+let dlgSetIdx = 0;
+function nextDlgSet() {
+  const set = AI_DIALOGUE_SETS[dlgSetIdx % AI_DIALOGUE_SETS.length];
+  dlgSetIdx++;
+  return set;
+}
 let dlgIndex = 0;
 let dlgMode = false;
 
@@ -2081,7 +2332,7 @@ function showToast(msg) {
 }
 function showToastTop(msg) {
   const t = document.getElementById('toastTop');
-  t.textContent = msg;
+  t.innerHTML = msg;
   t.classList.add('show');
   clearTimeout(t._t);
   t._t = setTimeout(() => t.classList.remove('show'), 2500);
@@ -2144,8 +2395,16 @@ function addChatMessage(user, img, text, amount, isMe, msgType) {
   if (isCreator) inner += '<span class="msg-badge badge-creator">제작자</span>';
   if (!isCreator && msgType === 'donate') inner += '<span class="msg-badge badge-donate">후원</span>';
   if (!isCreator && msgType === 'ai') inner += '<span class="msg-badge badge-ai">캐릭터에게</span>';
-  inner += getRankBadge(user);
-  if (!isCreator && userMirSpent[user] > 0) inner += '<img class="mir-heart" src="./images/icon/Badge 02.png" alt="">';
+  // 등급(팬) 아이콘과 매달 중 하나만 표시 — TOP 3면 메달 우선, 아니면 팬 등급
+  if (!isCreator) {
+    const medal = getRankBadge(user);
+    if (medal) {
+      inner += medal;
+    } else {
+      const fanIcon = getFanBadgeIcon(userMirSpent[user] || 0);
+      if (fanIcon) inner += '<img class="mir-heart" src="' + fanIcon + '" alt="" title="후원 ' + fmt(userMirSpent[user]) + '미르">';
+    }
+  }
   inner += '<img class="msg-avatar" src="' + (img || PROFILE_IMGS[0]) + '" alt="" onerror="this.style.display=\'none\'">';
   // 닉네임 (유저별 고유 색상)
   const nickColor = isCreator ? '' : ' style="color:' + getNickColor(user) + '"';
@@ -2153,8 +2412,8 @@ function addChatMessage(user, img, text, amount, isMe, msgType) {
   inner += '<span class="msg-text">' + text + '</span>';
   // 후원 카드 금액 표시
   if (msgType === 'donate' && amount > 0) {
-    const emoji = '💎';
-    inner += '<span class="donate-amount">' + emoji + ' ' + fmt(amount) + '</span>';
+    const emoji = '<img class="mir-ico" src="./images/icon/mir.png" alt="미르">';
+    inner += '<span class="donate-amount">' + emoji + fmt(amount) + '</span>';
   }
   msg.innerHTML = inner;
 
@@ -2234,7 +2493,7 @@ function setInputMode(mode) {
   if (mode === 'ai') {
     bar.classList.add('ai-mode');
     bar.classList.remove('donate-mode');
-    input.placeholder = '캐릭터에게 메세지 보내세요 · 💎 10';
+    input.placeholder = '캐릭터에게 메세지 보내세요 · 10 미르';
     input.maxLength = 100;
   } else {
     bar.classList.remove('ai-mode');
@@ -2242,6 +2501,15 @@ function setInputMode(mode) {
     input.placeholder = '시청자들과 자유롭게 대화하세요';
     input.maxLength = 50;
   }
+  // 타이머는 AI 모드에서만 의미있으므로 유저 채팅 모드에선 숨김
+  const tm = document.getElementById('headerTimer');
+  if (tm) tm.classList.toggle('hide-by-mode', mode !== 'ai');
+
+  document.querySelectorAll('.mode-tabs .mt-opt').forEach(b => {
+    const active = b.dataset.mode === mode;
+    b.classList.toggle('active', active);
+    b.setAttribute('aria-selected', active ? 'true' : 'false');
+  });
   updateCharCount();
   updateSendBtn();
 }
@@ -2250,7 +2518,26 @@ function updateSendBtn() {
   const input = document.getElementById('inputField');
   const btn = document.getElementById('sendBtn');
   const hasText = input.value.trim().length > 0;
-  btn.disabled = (inputMode === 'ai' && !hasText);
+  const locked = (inputMode === 'ai' && (chatPaused || dlgMode));
+  // 잠금 상태에선 disabled 해제 — 클릭 이벤트 받아 토스트 띄워야 함
+  btn.disabled = (inputMode === 'ai' && !hasText && !locked);
+}
+
+// 묘사 마커 삽입: 현재 커서 위치에 `* *`를 넣고 사이에 커서 위치
+function insertNarrationMarkers() {
+  const input = document.getElementById('inputField');
+  if (!input) return;
+  const start = input.selectionStart ?? input.value.length;
+  const end = input.selectionEnd ?? input.value.length;
+  const before = input.value.slice(0, start);
+  const after = input.value.slice(end);
+  input.value = before + '* *' + after;
+  const caret = start + 2;
+  input.focus();
+  input.setSelectionRange(caret, caret);
+  if (typeof autoGrow === 'function') autoGrow(input);
+  if (typeof updateCharCount === 'function') updateCharCount();
+  updateSendBtn();
 }
 
 // ═══ GENERAL CHAT TOGGLE ═══
@@ -2265,17 +2552,9 @@ function toggleGeneralChat() {
 function openGeneralChat() {
   generalChatOpen = true;
   const outer = document.getElementById('chatFeedOuter');
-  const toggleBtn = document.getElementById('chatToggleBtn');
   outer.classList.add('expanded');
-  toggleBtn.classList.add('active');
-  // 아이콘 전환: 말풍선 → X
-  toggleBtn.querySelector('.icon-chat').style.display = 'none';
-  toggleBtn.querySelector('.icon-close').style.display = '';
-  // 캐릭터 이름 숨김
-  document.getElementById('dlgNameRow').style.display = 'none';
-  setInputMode('free');
-  showToastTop('💬 시청자 채팅모드로 전환되었습니다');
-  // 스크롤을 맨 아래로
+  const dlgNameRow = document.getElementById('dlgNameRow');
+  if (dlgNameRow) dlgNameRow.style.display = 'none';
   const wrap = document.getElementById('chatFeedWrap');
   setTimeout(() => { wrap.scrollTop = wrap.scrollHeight; }, 100);
 }
@@ -2283,16 +2562,16 @@ function openGeneralChat() {
 function closeGeneralChat() {
   generalChatOpen = false;
   const outer = document.getElementById('chatFeedOuter');
-  const toggleBtn = document.getElementById('chatToggleBtn');
   outer.classList.remove('expanded');
-  toggleBtn.classList.remove('active');
-  // 아이콘 전환: X → 말풍선
-  toggleBtn.querySelector('.icon-chat').style.display = '';
-  toggleBtn.querySelector('.icon-close').style.display = 'none';
-  // 캐릭터 이름 복원
-  document.getElementById('dlgNameRow').style.display = '';
-  setInputMode('ai');
-  showToastTop('✨ 캐릭터 채팅모드로 전환되었습니다');
+  const dlgNameRow = document.getElementById('dlgNameRow');
+  if (dlgNameRow) dlgNameRow.style.display = '';
+}
+
+function handleChatFeedClick(event) {
+  if (!generalChatOpen) {
+    event.stopPropagation();
+    openGeneralChat();
+  }
 }
 
 function selectChatAmount(btn, amount) {
@@ -2378,10 +2657,14 @@ function sendMyMessage() {
   if (_sendLock) return;
   const input = document.getElementById('inputField');
   const text = input.value.trim();
-  if (!text) return;
 
-  // AI 모드일 때만 슬롯/대사 중 전송 차단 (유저 채팅은 항상 가능)
-  if (inputMode === 'ai' && (chatPaused || dlgMode)) return;
+  // AI 모드일 때만 슬롯/대사 중 전송 차단 (유저 채팅은 항상 가능) — 빈 텍스트여도 토스트
+  if (inputMode === 'ai' && (chatPaused || dlgMode)) {
+    showToastTop('캐릭터가 응답중에는 전송되지 않습니다');
+    return;
+  }
+
+  if (!text) return;
 
   _sendLock = true;
 
@@ -2389,7 +2672,7 @@ function sendMyMessage() {
     // AI에게 보내기 (유료)
     const cost = 10;
     if (balance < cost) {
-      showToastTop('💎 잔액이 부족합니다');
+      showToastTop('<img class="mir-ico" src="./images/icon/mir.png" alt="미르">잔액이 부족합니다');
       _sendLock = false;
       return;
     }
@@ -2415,8 +2698,10 @@ function startCountdown() {
 
   const timerEl = document.getElementById('headerTimer');
   const timerVal = document.getElementById('headerTimerVal');
-  timerEl.classList.remove('danger');
+  const segs = document.querySelectorAll('#timerSegments .seg');
+  timerEl.classList.remove('danger','warn');
   timerVal.textContent = '30s';
+  segs.forEach(s => s.classList.remove('empty'));
   timerEl.style.display = '';
 
   clearInterval(countdownTimer);
@@ -2427,13 +2712,22 @@ function startCountdown() {
     const elapsed = Date.now() - startTime;
     const remaining = Math.max(0, duration - elapsed);
     const sec = Math.ceil(remaining / 1000);
+    const activeCount = Math.ceil((remaining / duration) * segs.length);
 
     timerVal.textContent = sec + 's';
+    segs.forEach((s, i) => {
+      if (i < activeCount) s.classList.remove('empty');
+      else s.classList.add('empty');
+    });
 
-    if (sec <= 10) {
+    if (activeCount <= 2) {
       timerEl.classList.add('danger');
-    } else {
+      timerEl.classList.remove('warn');
+    } else if (activeCount <= 5) {
+      timerEl.classList.add('warn');
       timerEl.classList.remove('danger');
+    } else {
+      timerEl.classList.remove('warn','danger');
     }
 
     if (remaining <= 0) {
@@ -2576,8 +2870,8 @@ function showWinnerPopup(winnerEl) {
   const text = winnerEl.dataset.text;
 
   document.getElementById('wpName').textContent = name;
-  document.getElementById('wpAmountInline').textContent = '💎 ' + amount;
-  document.getElementById('wpAmount').textContent = '💎 ' + amount;
+  document.getElementById('wpAmountInline').innerHTML = '<img class="mir-ico" src="./images/icon/mir.png" alt="미르">' + amount;
+  document.getElementById('wpAmount').innerHTML = '<img class="mir-ico" src="./images/icon/mir.png" alt="미르">' + amount;
   document.getElementById('wpMessage').textContent = text;
 
   popup.classList.add('show');
@@ -2644,9 +2938,10 @@ function enterDialogueMode(triggerMsg, winnerUser, winnerAmount) {
   dlgMode = true;
   dlgAborted = false;
   dlgStartedAt = Date.now();
-  // AI 모드일 때만 전송 버튼 비활성 (유저 채팅은 가능)
-  if (inputMode === 'ai') document.getElementById('sendBtn').disabled = true;
-  const dlgSet = pick(AI_DIALOGUE_SETS);
+  // AI 모드일 때만 전송 버튼 잠금 상태 (유저 채팅은 가능). disabled 대신 클래스로 처리해 클릭 시 토스트 노출
+  if (inputMode === 'ai') document.getElementById('sendBtn').classList.add('locked');
+  updateSendBtn();
+  const dlgSet = nextDlgSet();
   currentChar = CHARACTERS[dlgSet.char];
   dlgData = dlgSet.lines;
   // 캐릭터 이미지 전환
@@ -2664,13 +2959,12 @@ function enterDialogueMode(triggerMsg, winnerUser, winnerAmount) {
 
   // 채팅 피드를 컴팩트하게
   document.getElementById('chatFeedOuter').classList.add('compact');
-  // 타이머를 "대사 진행중"으로 변경
-  headerTimer.classList.remove('danger');
-  document.querySelector('.header-timer-label').textContent = '';
-  document.getElementById('headerTimerVal').textContent = '대사 진행중';
-  const hg = document.querySelector('.header-timer .hourglass');
-  hg.textContent = '💬';
-  hg.classList.add('float');
+  // 타이머를 "대사 진행중"으로 변경 (HP바는 숨기고 텍스트만 표시)
+  headerTimer.classList.remove('danger','warn');
+  headerTimer.classList.add('streaming');
+  const lbl = document.querySelector('#headerTimer .header-timer-label');
+  if (lbl) lbl.textContent = '캐릭터 응답중에는 유저채팅만 가능합니다';
+  document.getElementById('headerTimerVal').textContent = '';
   aiResponse.classList.remove('show');
   document.getElementById('screen').classList.add('dlg-gradient');
 
@@ -2695,11 +2989,10 @@ function enterDialogueMode(triggerMsg, winnerUser, winnerAmount) {
 
 async function runDialogueSequence(triggerMsg, userName, userAmount) {
   // 전체 대사 소요 시간 추정 (타이핑 + 대기)
-  // Step1: 유저 메시지 타이핑 + 1500ms 대기
-  // Step2: 로딩 2500ms
-  // Step3: 각 턴 타이핑(약 2000ms) + pause(2500~3000ms)
-  // Step4: 마무리 1000ms
-  var estTotal = 1500 + 2500 + 1000; // step1 wait + step2 + final
+  // Step1: 유저 메시지 타이핑 + 로딩 동시 노출, 타이핑 종료 후 3000ms 유지
+  // Step2: 각 턴 타이핑(약 2000ms) + pause(2500~3000ms)
+  // Step3: 마무리 1000ms
+  var estTotal = 3000 + 1000; // step1 hold + final
   for (var t = 0; t < dlgData.length; t++) {
     var totalChars = 0;
     var lines = dlgData[t].lines || [];
@@ -2708,21 +3001,19 @@ async function runDialogueSequence(triggerMsg, userName, userAmount) {
   }
   dlgTotalDuration = estTotal;
 
-  // Step 1: Show user's winning message (VN style)
-  showDlgVN(userName, 'is-user', triggerMsg, 'is-user');
+  // Step 1: Show user's winning message + loading (동시 표시)
   document.getElementById('dlgProgress').textContent = '';
+  document.getElementById('dlgLoading').style.display = 'flex';
+  showDlgVN(userName, 'is-user', triggerMsg, 'is-user');
   await waitForTypingDone();
   if (dlgAborted) return;
-  await wait(1500);
+  // 유저 대사 + 로딩 유지 (타이핑 종료 후 3초)
+  await wait(3500);
   if (dlgAborted) return;
 
-  // Step 2: Show loading
-  document.getElementById('dlgNameRow').style.opacity = '0';
-  document.getElementById('dlgText').style.display = 'none';
-  document.getElementById('dlgLoading').style.display = '';
-  await wait(2500);
-  if (dlgAborted) return;
+  // Step 2: 로딩 + 유저 대사 숨기고 캐릭터 대사로 전환
   document.getElementById('dlgLoading').style.display = 'none';
+  document.getElementById('dlgNameRow').style.opacity = '0';
   document.getElementById('dlgText').style.display = '';
 
   // Step 3: AI dialogue turns (auto-advance, VN style)
@@ -2767,6 +3058,16 @@ function showDlgVN(name, nameClass, text, textClass, lines) {
 
   // Text class
   textEl.className = 'dlg-text ' + textClass;
+
+  // Dialogue 타입일 땐 개별 "" 제거하고 블록 전체를 한 번만 감쌈
+  if (textClass === 'is-dialogue' && lines) {
+    lines = lines.map(l => l.replace(/^[\x22\u201c\u201d]+/, '').replace(/[\x22\u201c\u201d]+$/, ''));
+    if (lines.length > 0) {
+      lines = lines.slice();
+      lines[0] = '\u201c' + lines[0];
+      lines[lines.length - 1] = lines[lines.length - 1] + '\u201d';
+    }
+  }
 
   // Typing animation
   const fullText = text || (lines ? lines.join('\n') : '');
@@ -2813,7 +3114,8 @@ function exitDialogueMode(delayBeforeTimer) {
   dlgAborted = true;
   if (window._dlgTypingTimer) clearInterval(window._dlgTypingTimer);
   // 전송 다시 활성화
-  document.getElementById('sendBtn').disabled = false;
+  document.getElementById('sendBtn').classList.remove('locked');
+  updateSendBtn();
 
   const headerTimer = document.getElementById('headerTimer');
   const dlgArea = document.getElementById('dlgArea');
@@ -2827,10 +3129,9 @@ function exitDialogueMode(delayBeforeTimer) {
   // dlg-gradient도 유지하여 배경 어둡게
 
   // 타이머 복원
-  document.querySelector('.header-timer-label').textContent = '다음턴까지';
-  const hgRestore = document.querySelector('.header-timer .hourglass');
-  hgRestore.textContent = '⏳';
-  hgRestore.classList.remove('float');
+  headerTimer.classList.remove('streaming');
+  const lblRestore = document.querySelector('#headerTimer .header-timer-label');
+  if (lblRestore) lblRestore.textContent = '다음턴까지';
   headerTimer.style.display = '';
   headerTimer.style.opacity = '1';
 
@@ -2885,13 +3186,24 @@ let chargeAmount = 10000;
 
 let chargeFromDonation = false; // 후원 시트에서 충전으로 왔는지
 
+// 미르 티어 정의: 갯수 → {price, icon}
+const MIR_TIERS = [
+  { amt: 600,   price: 4400,   icon: 1 },
+  { amt: 1200,  price: 8800,   icon: 2 },
+  { amt: 4000,  price: 29000,  icon: 3 },
+  { amt: 8000,  price: 58000,  icon: 4 },
+  { amt: 16000, price: 119000, icon: 5 },
+  { amt: 32000, price: 219000, icon: 6 },
+];
+
+function getMirTier(amount) {
+  return MIR_TIERS.find(t => t.amt === amount) || MIR_TIERS[1];
+}
+
 function openChargeSheet() {
-  chargeAmount = 10000;
-  document.getElementById('chargeAmountInput').value = 10000;
+  chargeAmount = 1200;
+  setChargeAmount(1200);
   document.getElementById('chargeCurrentBal').textContent = fmt(balance);
-  document.getElementById('chargePrice').textContent = '₩ ' + fmt(chargeAmount);
-  document.querySelectorAll('#chargeSheet .ds-preset').forEach(c => c.classList.remove('selected'));
-  document.querySelector('#chargeSheet .ds-preset[onclick*="10000"]').classList.add('selected');
 
   // 후원 시트가 열려있으면 스위칭
   const donateSheet = document.getElementById('donateSheet');
@@ -2928,19 +3240,21 @@ function closeChargeSheet() {
 }
 
 function setChargeAmount(amount) {
-  chargeAmount = amount;
-  document.getElementById('chargeAmountInput').value = amount;
-  document.getElementById('chargePrice').textContent = '₩ ' + fmt(amount);
-  document.querySelectorAll('#chargeSheet .ds-preset').forEach(c => c.classList.remove('selected'));
-  event.currentTarget.classList.add('selected');
+  const tier = getMirTier(amount);
+  chargeAmount = tier.amt;
+  document.getElementById('chargeTierIco').src = './images/mir-tiers/' + tier.icon + '.png';
+  document.getElementById('chargeAmountVal').textContent = fmt(tier.amt);
+  document.getElementById('chargePrice').textContent = '₩ ' + fmt(tier.price);
+  document.querySelectorAll('#chargeSheet .ds-preset').forEach(c => {
+    c.classList.toggle('selected', parseInt(c.dataset.amt) === tier.amt);
+  });
 }
 
 function processCharge() {
-  const val = parseInt(document.getElementById('chargeAmountInput').value) || 0;
-  if (val <= 0) return;
-  updateBalance(val);
+  if (chargeAmount <= 0) return;
+  updateBalance(chargeAmount);
   document.getElementById('chargeCurrentBal').textContent = fmt(balance);
-  showToastTop('💎 ' + fmt(val) + ' 미르 충전 완료!');
+  showToastTop('<img class="mir-ico" src="./images/icon/mir.png" alt="미르">' + fmt(chargeAmount) + ' 미르 충전 완료!');
   closeChargeSheet();
 }
 
@@ -3026,7 +3340,7 @@ let alertShowing = false;
 function showDonationAlert(userName, amount, message) {
   const userObj = DUMMY_USERS.find(u => u.name === userName);
   const img = userObj ? userObj.img : (userName === '나' ? './images/rank-me.webp' : PROFILE_IMGS[0]);
-  const displayText = (message ? message : '💎 ' + fmt(amount) + ' 후원!');
+  const displayText = (message ? message : '후원했어요!');
   trackMirSpent(userName, amount);
   addToJackpot(amount);
   // 100미르 미만: 채팅 카드만 (팝업/사운드/TTS 없음)
@@ -3292,7 +3606,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function processDonationFromSheet() {
   if (donateSelectedAmount <= 0) return;
   if (balance < donateSelectedAmount) {
-    showToastTop('💎 잔액이 부족합니다');
+    showToastTop('<img class="mir-ico" src="./images/icon/mir.png" alt="미르">잔액이 부족합니다');
     return;
   }
 
@@ -3303,14 +3617,14 @@ function processDonationFromSheet() {
   trackMirSpent('나', donateSelectedAmount);
 
   // 채팅창에 후원 메시지 표시
-  showDonationAlert('나', donateSelectedAmount, message || '💎 ' + fmt(donateSelectedAmount) + ' 후원!');
+  showDonationAlert('나', donateSelectedAmount, message);
 
   // 이펙트
   if (donateSelectedAmount >= 100) showDonationEffect(donateSelectedAmount);
 
   // 바로 시트 닫기
   closeDonation();
-  showToastTop('💎 ' + fmt(donateSelectedAmount) + ' 후원 완료!');
+  showToastTop('<img class="mir-ico" src="./images/icon/mir.png" alt="미르">' + fmt(donateSelectedAmount) + ' 후원 완료!');
 }
 
 function typeDonateReaction(text) {
@@ -3361,7 +3675,7 @@ function init() {
   }
 
   // 초기 상태: 대사 모드로 시작 (타이핑 애니메이션)
-  const initDlgSet = pick(AI_DIALOGUE_SETS);
+  const initDlgSet = AI_DIALOGUE_SETS[0];
   currentChar = CHARACTERS[initDlgSet.char];
   const lastSegment = initDlgSet.lines[initDlgSet.lines.length - 1];
   const dlgText = document.getElementById('dlgText');
@@ -3370,14 +3684,24 @@ function init() {
   dlgNameText.textContent = currentChar.name;
   dlgNameText.className = 'dlg-name-text is-char';
 
+  // Dialogue 타입이면 개별 따옴표 제거 후 블록 전체를 한 번만 감싸기 (원본 데이터 건드리지 않음)
+  let displayLines = lastSegment.lines;
+  if (lastSegment.type === 'dialogue') {
+    displayLines = lastSegment.lines.map(l => l.replace(/^[\x22\u201c\u201d]+/, '').replace(/[\x22\u201c\u201d]+$/, ''));
+    if (displayLines.length > 0) {
+      displayLines[0] = '\u201c' + displayLines[0];
+      displayLines[displayLines.length - 1] = displayLines[displayLines.length - 1] + '\u201d';
+    }
+  }
+
   // 타이핑 애니메이션
-  const fullText = lastSegment.lines.join('\n');
+  const fullText = displayLines.join('\n');
   let charIdx = 0;
   dlgText.innerHTML = '<span class="typing-cursor"></span>';
   window._dlgTypingTimer = setInterval(() => {
     if (charIdx >= fullText.length) {
       clearInterval(window._dlgTypingTimer);
-      dlgText.innerHTML = lastSegment.lines.map(l => '<div class="ln">' + l + '</div>').join('');
+      dlgText.innerHTML = displayLines.map(l => '<div class="ln">' + l + '</div>').join('');
       return;
     }
     const textSoFar = fullText.substring(0, charIdx + 1);
@@ -3438,7 +3762,7 @@ function endLive() {
       '<span class="end-rank-num">' + rank + '</span>' +
       '<div class="end-rank-avatar"><img src="' + img + '"></div>' +
       '<span class="end-rank-name">' + medal + name + '</span>' +
-      '<span class="end-rank-amount">💎 ' + fmt(amount) + '</span>';
+      '<span class="end-rank-amount"><img class="mir-ico" src="./images/icon/mir.png" alt="미르">' + fmt(amount) + '</span>';
     list.appendChild(item);
   });
 

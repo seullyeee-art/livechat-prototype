@@ -1,0 +1,42 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="leaf-body" x1="0.2" y1="0.1" x2="0.9" y2="0.95">
+      <stop offset="0" stop-color="#D6FFE5"/>
+      <stop offset="0.3" stop-color="#6EE7B7"/>
+      <stop offset="0.65" stop-color="#14C79B"/>
+      <stop offset="1" stop-color="#0A6B4A"/>
+    </linearGradient>
+    <linearGradient id="leaf-hl" x1="0.1" y1="0.1" x2="0.5" y2="0.6">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.8"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="leaf-glow" cx="0.5" cy="0.5" r="0.6">
+      <stop offset="0" stop-color="#6EE7B7" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#6EE7B7" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Glow halo -->
+  <circle cx="12" cy="12" r="11" fill="url(#leaf-glow)"/>
+  <!-- Leaf body -->
+  <path d="M18.5 4.2C19 4.5 20.2 6 20.5 8C21 11 20 15 17.5 17.5C15 20 11 21 7 19.5C4.5 18.5 3 16 3.2 13C3.5 9 6 6 9.5 4.5C12.5 3.2 16.5 3 18.5 4.2Z"
+    fill="url(#leaf-body)"
+    stroke="#0A6B4A" stroke-width="0.7" stroke-linejoin="round"/>
+  <!-- Mid vein -->
+  <path d="M19 4.5C16 8 10 13 5.5 18"
+    stroke="#0A6B4A" stroke-width="0.8" stroke-linecap="round" opacity="0.65"/>
+  <!-- Side veins -->
+  <path d="M15.5 6L13 8" stroke="#0A6B4A" stroke-width="0.5" stroke-linecap="round" opacity="0.5"/>
+  <path d="M12 9.5L9.5 11.5" stroke="#0A6B4A" stroke-width="0.5" stroke-linecap="round" opacity="0.5"/>
+  <path d="M8.5 13L6 15" stroke="#0A6B4A" stroke-width="0.5" stroke-linecap="round" opacity="0.5"/>
+  <!-- Gloss highlight band -->
+  <path d="M17 5.5C14 7.5 11 11 8.5 14"
+    stroke="url(#leaf-hl)" stroke-width="2.5" stroke-linecap="round" opacity="0.55"/>
+  <!-- Dewdrop -->
+  <ellipse cx="10.5" cy="10" rx="1.4" ry="1.7" fill="#fff" opacity="0.88"/>
+  <ellipse cx="10.1" cy="9.3" rx="0.45" ry="0.55" fill="#fff"/>
+  <!-- Sparkles -->
+  <path d="M19 3L19.5 4.5L21 5L19.5 5.5L19 7L18.5 5.5L17 5L18.5 4.5Z" fill="#D6FFE5"/>
+  <circle cx="4.5" cy="7" r="0.7" fill="#fff"/>
+  <circle cx="4.5" cy="7" r="1.4" fill="#fff" opacity="0.35"/>
+  <circle cx="21" cy="14.5" r="0.5" fill="#D6FFE5"/>
+</svg>

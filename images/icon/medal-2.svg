@@ -1,0 +1,30 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="m2-face" cx="0.35" cy="0.3" r="0.9">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="0.35" stop-color="#EAEEF3"/>
+      <stop offset="0.75" stop-color="#A9B1BA"/>
+      <stop offset="1" stop-color="#5A6470"/>
+    </radialGradient>
+    <linearGradient id="m2-rim" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F5F7FA"/>
+      <stop offset="0.5" stop-color="#C0C7D0"/>
+      <stop offset="1" stop-color="#4A5260"/>
+    </linearGradient>
+    <linearGradient id="m2-ribbon-l" x1="0.3" y1="0" x2="0.6" y2="1">
+      <stop offset="0" stop-color="#3AA1E6"/>
+      <stop offset="1" stop-color="#0E4A7A"/>
+    </linearGradient>
+    <linearGradient id="m2-ribbon-r" x1="0.7" y1="0" x2="0.4" y2="1">
+      <stop offset="0" stop-color="#5BB6F0"/>
+      <stop offset="1" stop-color="#0E4A7A"/>
+    </linearGradient>
+  </defs>
+  <path d="M5 1L10.5 10L8 12.5L3 3Z" fill="url(#m2-ribbon-l)"/>
+  <path d="M19 1L13.5 10L16 12.5L21 3Z" fill="url(#m2-ribbon-r)"/>
+  <circle cx="12" cy="15" r="7.5" fill="url(#m2-rim)"/>
+  <circle cx="12" cy="15" r="6" fill="url(#m2-face)"/>
+  <ellipse cx="10" cy="13" rx="2.5" ry="1.2" fill="#fff" opacity="0.6"/>
+  <text x="12" y="18.5" text-anchor="middle" font-family="'Pretendard Variable JP', sans-serif" font-size="9" font-weight="900" fill="#2A3040">2</text>
+  <circle cx="19" cy="5" r="0.7" fill="#fff" opacity="0.8"/>
+</svg>

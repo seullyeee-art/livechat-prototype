@@ -1,0 +1,27 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="hv-body" cx="0.35" cy="0.25" r="0.95">
+      <stop offset="0" stop-color="#E9D5FF"/>
+      <stop offset="0.35" stop-color="#B877FF"/>
+      <stop offset="0.8" stop-color="#7C3AED"/>
+      <stop offset="1" stop-color="#3B0B7A"/>
+    </radialGradient>
+    <radialGradient id="hv-glow" cx="0.5" cy="0.5" r="0.6">
+      <stop offset="0" stop-color="#A855F7" stop-opacity="0.4"/>
+      <stop offset="1" stop-color="#A855F7" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Glow halo -->
+  <circle cx="12" cy="13" r="10.5" fill="url(#hv-glow)"/>
+  <!-- Heart shape — rounded classic silhouette -->
+  <path d="M12 21C12 21 3 15.2 3 9.5C3 6.46 5.46 4 8.5 4C10.27 4 11.5 4.9 12 6C12.5 4.9 13.73 4 15.5 4C18.54 4 21 6.46 21 9.5C21 15.2 12 21 12 21Z"
+    fill="url(#hv-body)"
+    stroke="#4C1D95" stroke-width="1.1" stroke-linejoin="round"/>
+  <!-- Gloss highlight -->
+  <ellipse cx="8.4" cy="9" rx="2.2" ry="1.4" fill="#FFF" opacity="0.55" transform="rotate(-30 8.4 9)"/>
+  <!-- Sparkle cluster -->
+  <path d="M17.8 4L18.3 5.3L19.6 5.8L18.3 6.3L17.8 7.6L17.3 6.3L16 5.8L17.3 5.3Z" fill="#EDE9FE"/>
+  <circle cx="20.5" cy="14" r="0.7" fill="#FFF"/>
+  <circle cx="20.5" cy="14" r="1.5" fill="#FFF" opacity="0.4"/>
+  <circle cx="4" cy="14" r="0.5" fill="#E9D5FF"/>
+</svg>
