@@ -841,7 +841,26 @@ body{
   color:rgba(174,176,182,0.61);
 }
 .dlg-progress-label{font-weight:400}
-.dlg-progress-num{color:var(--label-strong);font-variant-numeric:tabular-nums;font-weight:400}
+.dlg-progress-num{color:var(--label-strong) !important;font-variant-numeric:tabular-nums;font-weight:700}
+.dlg-timer-pill{
+  padding:5px 12px;border-radius:14px;
+  background:rgba(255,255,255,0.12);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,0.18);
+  box-shadow:0 2px 8px rgba(0,0,0,0.35);
+  font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;
+  color:var(--label-strong);line-height:1.3;white-space:nowrap;
+  transition:background 0.3s, border-color 0.3s, opacity 0.2s;
+}
+.dlg-timer-pill:empty{opacity:0}
+.dlg-timer-pill .dlg-timer-num{color:var(--primary-normal);font-weight:800;margin-left:3px}
+.dlg-skip-row.warn .dlg-timer-pill{background:rgba(250,204,21,0.12);border-color:rgba(250,204,21,0.45)}
+.dlg-skip-row.warn .dlg-timer-pill .dlg-timer-num{color:#facc15}
+.dlg-skip-row.danger .dlg-timer-pill{background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.55)}
+.dlg-skip-row.danger .dlg-timer-pill .dlg-timer-num{color:#ef4444;animation:timerPulse 0.7s ease-in-out infinite}
+.dlg-skip-row.warn .dlg-progress-num{color:#facc15}
+.dlg-skip-row.danger .dlg-progress-num{color:#ef4444;animation:timerPulse 0.7s ease-in-out infinite}
+@keyframes timerPulse{0%,100%{opacity:1}50%{opacity:0.55}}
 .dlg-skip-btn{
   padding:7px 14px;border-radius:16px;
   background:rgba(255,255,255,0.08);
@@ -875,30 +894,20 @@ body{
   transition:background 0.3s;
 }
 .input-bar.timer-ambient{
-  border:2px solid #38bdf8;
-  box-shadow:0 0 10px rgba(56,189,248,0.35);
   overflow:visible;
-  transition:border-color 0.4s, box-shadow 0.4s;
+  transition:box-shadow 0.4s;
 }
-.input-bar.timer-ambient.warn{
-  border-color:#facc15;
-  box-shadow:0 0 10px rgba(250,204,21,0.4);
-}
-.input-bar.timer-ambient.danger{
-  border-color:#ef4444;
-  box-shadow:0 0 12px rgba(239,68,68,0.55);
-  animation:ambPulse 0.7s ease-in-out infinite;
-}
-@keyframes ambPulse{0%,100%{box-shadow:0 0 8px rgba(239,68,68,0.4)}50%{box-shadow:0 0 16px rgba(239,68,68,0.75)}}
 .input-bar .timer-pill{
-  position:absolute;top:-10px;left:12px;z-index:2;
+  position:absolute;top:-16px;left:12px;z-index:2;
   padding:2px 8px;border-radius:10px;
   background:rgba(0,0,0,0.85);
   border:1px solid var(--line-alternative);
   font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;
   color:var(--label-strong);line-height:1.3;
   pointer-events:none;
+  transition:opacity 0.2s;
 }
+.input-bar .timer-pill:empty{opacity:0}
 .input-bar.timer-ambient.warn .timer-pill{color:#facc15;border-color:rgba(250,204,21,0.5)}
 .input-bar.timer-ambient.danger .timer-pill{color:#ef4444;border-color:rgba(239,68,68,0.5)}
 .chat-timer-banner.hidden{display:none}
@@ -1890,6 +1899,7 @@ input[type=number]{-moz-appearance:textfield}
           <span class="dlg-loading-text" id="dlgLoadingText">잠시 기다려주세요....</span>
         </div>
         <span class="dlg-progress" id="dlgProgress"></span>
+        <span class="dlg-timer-pill" id="headerTimerVal"></span>
       </div>
     </div>
 
@@ -1908,15 +1918,22 @@ input[type=number]{-moz-appearance:textfield}
       </div>
       <!-- 인풋 (바텀시트 안) -->
       <div class="chat-sheet-input" id="chatSheetInput">
+        <!-- HP 게이지바 (주석 처리 — 추후 복귀 시 사용)
         <div class="chat-timer-banner" id="headerTimer">
           <span class="header-timer-label">다음턴까지</span>
           <div class="timer-segments" id="timerSegments">
             <span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span>
           </div>
-          <span class="header-timer-val" id="headerTimerVal">30s</span>
+          <span class="header-timer-val">30s</span>
+        </div>
+        -->
+        <!-- 히든 더미 (startCountdown이 querySelectorAll 참조만 하므로 존재만) -->
+        <div id="headerTimer" style="display:none">
+          <span class="header-timer-label"></span>
+          <div id="timerSegments"></div>
         </div>
         <div class="input-bar-row">
-          <div class="input-bar ai-mode" id="inputBar">
+          <div class="input-bar ai-mode timer-ambient" id="inputBar">
             <div class="input-row2">
               <div class="mode-tabs" role="tablist" aria-label="채팅 모드">
                 <button class="mt-opt active" data-mode="ai" onclick="setInputMode('ai')" role="tab" aria-selected="true">AI</button>
@@ -2477,7 +2494,7 @@ function addChatMessage(user, img, text, amount, isMe, msgType) {
   // 뱃지들 — 닉네임 앞에 순서대로
   if (isCreator) inner += '<span class="msg-badge badge-creator">제작자</span>';
   if (!isCreator && msgType === 'donate') inner += '<span class="msg-badge badge-donate">후원</span>';
-  if (!isCreator && msgType === 'ai') inner += '<span class="msg-badge badge-ai">캐릭터에게</span>';
+  if (!isCreator && msgType === 'ai') inner += '<span class="msg-badge badge-ai">AI에게</span>';
   // 등급(팬) 아이콘과 매달 중 하나만 표시 — TOP 3면 메달 우선, 아니면 팬 등급
   if (!isCreator) {
     const medal = getRankBadge(user);
@@ -2653,7 +2670,9 @@ function closeGeneralChat() {
 function handleChatFeedClick(event) {
   if (!generalChatOpen) {
     event.stopPropagation();
-    openGeneralChat();
+    // 바텀시트 열릴 때는 항상 유저챗 모드로 (setInputMode가 내부에서 openGeneralChat도 호출)
+    if (inputMode !== 'free') setInputMode('free');
+    else openGeneralChat();
   }
 }
 
@@ -2781,11 +2800,12 @@ function startCountdown() {
 
   const timerEl = document.getElementById('headerTimer');
   const timerVal = document.getElementById('headerTimerVal');
+  const inputBar = document.getElementById('inputBar');
   const segs = document.querySelectorAll('#timerSegments .seg');
   timerEl.classList.remove('danger','warn');
-  timerVal.textContent = '30s';
+  if (inputBar) inputBar.classList.remove('danger','warn');
+  timerVal.innerHTML = '다음턴까지 <span class="dlg-timer-num">30s</span>';
   segs.forEach(s => s.classList.remove('empty'));
-  timerEl.style.display = '';
 
   clearInterval(countdownTimer);
   const startTime = Date.now();
@@ -2797,20 +2817,27 @@ function startCountdown() {
     const sec = Math.ceil(remaining / 1000);
     const activeCount = Math.ceil((remaining / duration) * segs.length);
 
-    timerVal.textContent = sec + 's';
+    timerVal.innerHTML = '다음턴까지 <span class="dlg-timer-num">' + sec + 's</span>';
     segs.forEach((s, i) => {
       if (i < activeCount) s.classList.remove('empty');
       else s.classList.add('empty');
     });
 
-    if (activeCount <= 2) {
+    const skipRow = document.querySelector('.dlg-skip-row');
+    if (sec <= 5) {
       timerEl.classList.add('danger');
       timerEl.classList.remove('warn');
-    } else if (activeCount <= 4) {
+      if (inputBar) { inputBar.classList.add('danger'); inputBar.classList.remove('warn'); }
+      if (skipRow) { skipRow.classList.add('danger'); skipRow.classList.remove('warn'); }
+    } else if (sec <= 10) {
       timerEl.classList.add('warn');
       timerEl.classList.remove('danger');
+      if (inputBar) { inputBar.classList.add('warn'); inputBar.classList.remove('danger'); }
+      if (skipRow) { skipRow.classList.add('warn'); skipRow.classList.remove('danger'); }
     } else {
       timerEl.classList.remove('warn','danger');
+      if (inputBar) inputBar.classList.remove('warn','danger');
+      if (skipRow) skipRow.classList.remove('warn','danger');
     }
 
     if (remaining <= 0) {
@@ -3083,6 +3110,9 @@ async function runDialogueSequence(triggerMsg, userName, userAmount) {
   }
   dlgTotalDuration = estTotal;
 
+  // 대사 영역 항상 보이게
+  document.getElementById('dlgText').style.display = '';
+
   // Step 1: 유저 대사 타이핑 + 로딩 동시 노출
   if (triggerMsg) {
     document.getElementById('dlgProgress').textContent = '';
@@ -3090,14 +3120,13 @@ async function runDialogueSequence(triggerMsg, userName, userAmount) {
     showDlgVN(userName, 'is-user', triggerMsg, 'is-user');
     await waitForTypingDone();
     if (dlgAborted) return;
-    // 타이핑 끝난 후 3초 유지 (유저 대사 + 로딩 동시)
+    // 타이핑 끝난 후 3초 유지
     await wait(3000);
     if (dlgAborted) return;
 
-    // Step 2: 로딩 + 유저 대사 숨기고 캐릭터 대사로 전환
+    // Step 2: 로딩 숨기고 캐릭터 대사로 전환
     document.getElementById('dlgLoading').style.display = 'none';
     document.getElementById('dlgNameRow').style.opacity = '0';
-    document.getElementById('dlgText').style.display = '';
   }
 
   // Step 3: AI dialogue turns (auto-advance, VN style)
@@ -3211,12 +3240,8 @@ function exitDialogueMode(delayBeforeTimer) {
   // 채팅 피드는 compact 유지 (작은 영역으로 표시)
   // dlg-gradient도 유지하여 배경 어둡게
 
-  // 타이머 복원
+  // 타이머 복원 (현재 pill 방식 사용 — 숨김 유지)
   headerTimer.classList.remove('streaming');
-  const lblRestore = document.querySelector('#headerTimer .header-timer-label');
-  if (lblRestore) lblRestore.textContent = '다음턴까지';
-  headerTimer.style.display = '';
-  headerTimer.style.opacity = '1';
 
   turnNumber++;
   if (delayBeforeTimer > 0) {
